@@ -9,6 +9,7 @@
 #include <xc.h>
 #include "rs3231_i2c.h"
 #include "I2C.h"
+#include "timer_0.h"
 #include <stdint.h>
 
 void timer_0_Initialize(void) {
@@ -24,6 +25,7 @@ void timer_0_Initialize(void) {
 
 void t0_ISR(void) {
     TMR0IF = 0;
+    t0_disable();
     // timer pre-load
     TMR0H = 0b00001011; // pre = 16, post = 1, out = 1 sec
     TMR0L = 0b11011100;
@@ -31,4 +33,5 @@ void t0_ISR(void) {
     LATD0 = ~LATD0;
     uint8_t seconds = 0;
     read_seconds(&seconds);
+    t0_enable();
 }

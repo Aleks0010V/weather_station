@@ -50,7 +50,7 @@ void master_write_1Byte(uint8_t address, uint8_t data)
     serial_port_enable();
     
     RCEN = 0;
-    start();  while(is_iddle());
+    start();
     
     transmit(address);  // connect
     transmit(data);
@@ -71,17 +71,17 @@ void master_read_1Byte(uint8_t address, uint8_t reg, uint8_t* dest_ptr)
     serial_port_enable();
     
     RCEN = 0;  // prepare to read specific register
-    start();  while(is_iddle());
+    start();
     transmit(address);
     transmit(reg);
     
-    stop();  while(is_iddle());
-    RCEN = 1;
-    ACKDT = 1;
-    start();
+    restart();
     transmit(address + 1);
-    while(is_iddle() && BF);
+    RCEN = 1;
+    while(is_iddle() && !BF);
     *dest_ptr = SSP1BUF; 
+    ACKDT = 1;
+    ACKEN = 1;  while(is_iddle());
     
     stop();  while(is_iddle());
     serial_port_disable();
