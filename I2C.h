@@ -4,10 +4,10 @@
  *
  * Created on August 14, 2020, 1:08 PM
  */
+#include <stdint.h>
 
 #ifndef I2C_H
 #define	I2C_H
-#include <stdint.h>
 
 #ifdef	__cplusplus
 extern "C" {
@@ -21,6 +21,7 @@ extern "C" {
 #define RW SSP1STATbits.RW
 #define BF SSP1STATbits.BF
 #define SSPEN SSP1CON1bits.SSPEN
+#define ACKDT SSP1CON2bits.ACKDT
 
 #define serial_port_enable() SSPEN = 1
 #define serial_port_disable() SSPEN = 0
@@ -32,7 +33,7 @@ void I2C_Initialize(void);
 void i2c_ISR(void);
 void master_write_1Byte(uint8_t address, uint8_t data);
 void master_write_2Bytes(uint8_t address, uint16_t data);
-static void transmit(uint8_t address);
+void master_read_1Byte(uint8_t address, uint8_t reg, uint8_t* dest_ptr);
 
 
 #ifdef	__cplusplus

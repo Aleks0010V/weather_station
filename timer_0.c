@@ -7,7 +7,9 @@
 
 
 #include <xc.h>
+#include "rs3231_i2c.h"
 #include "I2C.h"
+#include <stdint.h>
 
 void timer_0_Initialize(void) {
     T0CON1bits.T0ASYNC = 0;
@@ -27,5 +29,6 @@ void t0_ISR(void) {
     TMR0L = 0b11011100;
     
     LATD0 = ~LATD0;
-    master_write_1Byte(0x76, 0xD0);
+    uint8_t seconds = 0;
+    read_seconds(&seconds);
 }
