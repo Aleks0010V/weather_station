@@ -32,6 +32,9 @@ void t0_ISR(void) {
     
     LATD0 = ~LATD0;
     uint8_t seconds = 0;
-    read_seconds(&seconds);
+    if (rs3231_Check())
+        {LATDbits.LATD1 = 1;}
+    else
+        {LATDbits.LATD1 = 0;}
     t0_enable();
 }

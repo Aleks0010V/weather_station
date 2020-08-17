@@ -5,6 +5,7 @@
  * Created on August 16, 2020, 5:20 PM
  */
 #include <stdint.h>
+#include <stdbool.h>
 
 #ifndef RS3231_I2C_H
 #define	RS3231_I2C_H
@@ -38,10 +39,10 @@ enum addresses
     TEMP_LOW
 }addrs;
 
+bool rs3231_Check(void);
 void read_seconds(uint8_t *dest_reg);
 void read_minutes(uint8_t *dest_reg);
 void read_hours(uint8_t *dest_reg);
-void read_status(uint8_t *dest_reg);
 
 #ifdef	__cplusplus
 }

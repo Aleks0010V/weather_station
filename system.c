@@ -7,15 +7,22 @@
 
 
 #include <xc.h>
+#include <pic16f18875.h>
 #include "config.h"
 #include "oscillator.h"
 #include "pin_manager.h"
 #include "I2C.h"
 #include "timer_0.h"
+#include "rs3231_i2c.h"
 
-void System_Initialize(void) {
+void System_Initialize(void)
+{
     osc_Initialize();
     pin_Initiasize();
     I2C_Initialize();
     timer_0_Initialize();
+    if (rs3231_Check())
+        {LATDbits.LATD1 = 1;}
+    else
+        {LATDbits.LATD1 = 0;}
 }
