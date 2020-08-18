@@ -45,7 +45,7 @@ static bool is_iddle(void)
     }
 }
 
-void master_write_1Byte(uint8_t address, uint8_t data)
+void master_write_1Byte(uint8_t address, uint8_t reg, uint8_t data)
 {
     serial_port_enable();
     
@@ -53,6 +53,7 @@ void master_write_1Byte(uint8_t address, uint8_t data)
     start();
     
     transmit(address);  // connect
+    transmit(reg);
     transmit(data);
     
     stop();  while(is_iddle());

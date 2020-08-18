@@ -9,6 +9,7 @@
 #include <xc.h>
 #include "system.h"
 #include "timer_0.h"
+#include "rs3231_i2c.h"
 #include "I2C.h"
 
 void main(void) {
@@ -17,6 +18,10 @@ void main(void) {
     peripheral_int_enable();
     t0_int_enable();
     t0_enable();
+    
+    set_minutes(59);
+    set_hours(1, 21);
+    set_seconds(56);
     
     while (1) {
         
