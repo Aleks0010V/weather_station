@@ -14,6 +14,7 @@
 #include "I2C.h"
 #include "timer_0.h"
 #include "rs3231_i2c.h"
+#include "internal_interrupt.h"
 
 void System_Initialize(void)
 {
@@ -21,6 +22,8 @@ void System_Initialize(void)
     pin_Initiasize();
     I2C_Initialize();
     timer_0_Initialize();
+    initialize_INT();
+    rs3231_Initialize();
     if (rs3231_Check())
         {LATDbits.LATD1 = 1;}
     else

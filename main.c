@@ -11,6 +11,7 @@
 #include "timer_0.h"
 #include "rs3231_i2c.h"
 #include "I2C.h"
+#include "internal_interrupt.h"
 
 void main(void) {
     System_Initialize();
@@ -18,6 +19,7 @@ void main(void) {
     peripheral_int_enable();
     t0_int_enable();
     t0_enable();
+    INT_enable();
     
     set_minutes(59);
     set_hours(1, 21);
@@ -37,6 +39,9 @@ void __interrupt() ISR(void)
     }
     if (SSP1IF & SSP1IE) {
         i2c_ISR();
+    }
+    if (INTF & INTE){
+        int_ISR();
     }
     return;
 }

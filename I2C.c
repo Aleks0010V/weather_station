@@ -30,6 +30,7 @@ void I2C_Initialize(void)
 
 void i2c_ISR(void)
 {
+    SSP1IF = 0;
     if (SEN || PEN || RSEN) {
     
     }
