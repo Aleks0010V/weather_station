@@ -19,6 +19,6 @@ void initialize_INT(void)
 void int_ISR(void)
 {
     INTF = 0;
-    clear_a2f();
+//    clear_a2f();
     RD2 = ~RD2;
 }

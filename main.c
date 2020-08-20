@@ -22,7 +22,7 @@ void main(void) {
     INT_enable();
     
     set_minutes(59);
-    set_hours(1, 21);
+    set_hours(0, 21);
     set_seconds(56);
     
     while (1) {

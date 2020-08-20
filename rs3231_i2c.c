@@ -33,11 +33,23 @@ bool rs3231_Check(void)
 
 void rs3231_Initialize(void)
 {
-    // enable interrupt, enable Alarm 2 interrupt
-    master_write_1Byte(MAIN, CONTROL, 0x06);
-    clear_a2f();
     // enable alarm 2 once per minute
-    set_alarm_2(0, false, 0, true, true);
+//    alarm2_every_minute();
+    // enable interrupt, enable Alarm 2 interrupt
+//    master_write_1Byte(MAIN, CONTROL, 0x06);
+//    clear_a2f();
+}
+
+void alarm2_every_minute (void)
+{
+    uint8_t a2_1 = 0;  master_read_1Byte(MAIN, ALARM_2_MINUTES, &a2_1);
+    uint8_t a2_2 = 0;  master_read_1Byte(MAIN, ALARM_2_HOURS, &a2_2);
+    uint8_t a2_3 = 0;  master_read_1Byte(MAIN, ALARM_2_DAY_DATE, &a2_3);
+    
+    master_write_1Byte(MAIN, ALARM_2_MINUTES, a2_1 | 128);
+    master_write_1Byte(MAIN, ALARM_2_HOURS, a2_2 | 128);
+    master_write_1Byte(MAIN, ALARM_2_DAY_DATE, a2_3 | 128);
+    clear_a2f();
 }
 
 void set_alarm_2(uint8_t minutes, bool mode_12h, uint8_t hours, bool a2m2, bool a2m3)
@@ -85,13 +97,6 @@ void read_minutes(uint8_t *dest_reg)
     fetch_minutes(dest_reg);
     *dest_reg = ((*dest_reg) >> 4) + ((*dest_reg) & 0x0F);
 }
-
-//void read_hours(uint8_t *dest_reg)
-//{
-//    fetch_hours(dest_reg);
-//    
-//    if (*dest_reg & 64)
-//}
 
 void get_time_string(char* str_ptr)
 {
@@ -171,6 +176,58 @@ void set_hours(bool mode_12h, uint8_t hours)
     }
     
     master_write_1Byte(MAIN, HOURS, hours);
+}
+
+void set_day(uint8_t day)
+{
+    if (day > 7 || day < 1)
+        return;
+    
+    master_write_1Byte(MAIN, DAY, day);
+}
+
+void set_date(uint8_t date)
+{
+    if (date > 31 || date < 1)
+        return;
+    
+    bcd_convert(&date);
+    master_write_1Byte(MAIN, DATE, date);
+}
+
+void set_month(uint8_t month)
+{
+    if (month > 12 || month < 1)
+        return;
+    
+    uint8_t month_reg = 0;
+    master_read_1Byte(MAIN, MONTH_CENTURY, &month_reg);
+    month_reg = month_reg & 128;  // save century bit
+    
+    bcd_convert(&month);
+    master_write_1Byte(MAIN, MONTH_CENTURY, month + month_reg);
+}
+
+void set_year(uint8_t year, uint8_t century)
+{
+    if (year > 99 || year < 0)
+        return;
+    if (century != 20 && century != 21)
+        return;
+    else if (century == 20)
+        century = 0;
+    else if (century == 21)
+        century = 128;
+    
+    uint8_t month_reg = 0;
+    master_read_1Byte(MAIN, MONTH_CENTURY, &month_reg);
+    if (century != month_reg & 128)  // update century bit
+    {
+        master_write_1Byte(MAIN, MONTH_CENTURY, month_reg | century);
+    }
+    
+    bcd_convert(&year);
+    master_write_1Byte(MAIN, YEAR, year);
 }
 
 static void read_status(uint8_t *dest_reg)
