@@ -34,22 +34,18 @@ bool rs3231_Check(void)
 void rs3231_Initialize(void)
 {
     // enable alarm 2 once per minute
-//    alarm2_every_minute();
+    alarm2_every_minute();
     // enable interrupt, enable Alarm 2 interrupt
-//    master_write_1Byte(MAIN, CONTROL, 0x06);
-//    clear_a2f();
+    clear_a2f();
+    master_write_1Byte(MAIN, CONTROL, 0x06);
 }
 
 void alarm2_every_minute (void)
-{
-    uint8_t a2_1 = 0;  master_read_1Byte(MAIN, ALARM_2_MINUTES, &a2_1);
-    uint8_t a2_2 = 0;  master_read_1Byte(MAIN, ALARM_2_HOURS, &a2_2);
-    uint8_t a2_3 = 0;  master_read_1Byte(MAIN, ALARM_2_DAY_DATE, &a2_3);
-    
-    master_write_1Byte(MAIN, ALARM_2_MINUTES, a2_1 | 128);
-    master_write_1Byte(MAIN, ALARM_2_HOURS, a2_2 | 128);
-    master_write_1Byte(MAIN, ALARM_2_DAY_DATE, a2_3 | 128);
+{   
     clear_a2f();
+    master_write_1Byte(MAIN, ALARM_2_MINUTES, 128);
+    master_write_1Byte(MAIN, ALARM_2_HOURS, 128);
+    master_write_1Byte(MAIN, ALARM_2_DAY_DATE, 128);
 }
 
 void set_alarm_2(uint8_t minutes, bool mode_12h, uint8_t hours, bool a2m2, bool a2m3)
@@ -88,8 +84,8 @@ void read_seconds(uint8_t *dest_reg)
 void clear_a2f(void)
 {
     uint8_t status_control = 0;
-    read_control(&status_control);
-    master_write_1Byte(MAIN, CONTROL_STATUS, status_control & 0xFD);
+    read_status(&status_control);
+    master_write_1Byte(MAIN, CONTROL_STATUS, status_control & ~(1 << 1));
 }
 
 void read_minutes(uint8_t *dest_reg)
@@ -205,7 +201,7 @@ void set_month(uint8_t month)
     month_reg = month_reg & 128;  // save century bit
     
     bcd_convert(&month);
-    master_write_1Byte(MAIN, MONTH_CENTURY, month + month_reg);
+    master_write_1Byte(MAIN, MONTH_CENTURY, month | month_reg);
 }
 
 void set_year(uint8_t year, uint8_t century)

@@ -17,9 +17,9 @@ void main(void) {
     System_Initialize();
     interrupt_enable();
     peripheral_int_enable();
-    t0_int_enable();
+    TMR0IF = 0;  t0_int_enable();
     t0_enable();
-    INT_enable();
+    INTF = 0;  INT_enable();
     
     set_minutes(59);
     set_hours(0, 21);

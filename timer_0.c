@@ -31,6 +31,8 @@ void t0_ISR(void) {
     TMR0L = 0b11011100;
     
     LATD0 = ~LATD0;
-    char* time = NULL; get_time_string(time);
+    uint8_t reg = 0;  
+    master_read_1Byte(208, CONTROL, &reg);
+    master_read_1Byte(208, CONTROL_STATUS, &reg);
     t0_enable();
 }

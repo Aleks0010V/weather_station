@@ -23,7 +23,7 @@ void pin_Initiasize(void){
     ANSELD = 0;
     
     // 0 - output, 1 - input
-    TRISA = 0;
+    TRISA = 0b01000000;
     TRISB = 0;
     // MSSP1 as I2C pins should be inputs
     TRISC = 0b00001100;
