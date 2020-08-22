@@ -10,7 +10,6 @@
 #include <stdbool.h>
 #include "I2C.h"
 #include "rs3231_i2c.h"
-#include <stdio.h>
 
 #define MAIN 0b11010000
 

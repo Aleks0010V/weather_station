@@ -15,6 +15,7 @@
 #include "timer_0.h"
 #include "rs3231_i2c.h"
 #include "internal_interrupt.h"
+#include "SPI.h"
 
 void System_Initialize(void)
 {
@@ -28,4 +29,5 @@ void System_Initialize(void)
         {LATDbits.LATD1 = 1;}
     else
         {LATDbits.LATD1 = 0;}
+    initialize_SPI();
 }

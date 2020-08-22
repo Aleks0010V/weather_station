@@ -11,6 +11,12 @@
 #include <stdbool.h>
 #include "I2C.h"
 
+#define i2c_enable() SSPEN = 1
+#define i2c_disable() SSPEN = 0
+#define start() SEN = 1
+#define stop() PEN = 1
+#define restart() RSEN = 1
+
 static void transmit(uint8_t address);
 
 void I2C_Initialize(void)
@@ -25,7 +31,7 @@ void I2C_Initialize(void)
     SSP1CON2 = 0x00;
     SSP1ADD  = 0x09;
 //    SSP1IE = 1;
-    SSPEN = 0;
+    i2c_disable();
 }
 
 void i2c_ISR(void)
@@ -48,7 +54,7 @@ static bool is_iddle(void)
 
 void master_write_1Byte(uint8_t address, uint8_t reg, uint8_t data)
 {
-    serial_port_enable();
+    i2c_enable();
     
     RCEN = 0;
     start();
@@ -58,19 +64,19 @@ void master_write_1Byte(uint8_t address, uint8_t reg, uint8_t data)
     transmit(data);
     
     stop();  while(is_iddle());
-    serial_port_disable();
+    i2c_disable();
 }
 
 void master_write_2Bytes(uint8_t address, uint16_t data)
 {
-    serial_port_enable();
+    i2c_enable();
     start();
     while(is_iddle());
 }
 
 void master_read_1Byte(uint8_t address, uint8_t reg, uint8_t* dest_ptr)
 {
-    serial_port_enable();
+    i2c_enable();
     
     RCEN = 0;  // prepare to read specific register
     start();
@@ -86,7 +92,7 @@ void master_read_1Byte(uint8_t address, uint8_t reg, uint8_t* dest_ptr)
     ACKEN = 1;  while(is_iddle());
     
     stop();  while(is_iddle());
-    serial_port_disable();
+    i2c_disable();
 }
 
 static void transmit(uint8_t data) 

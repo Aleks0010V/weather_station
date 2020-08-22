@@ -7,6 +7,7 @@
 
 
 #include <xc.h>
+#include <stdint.h>
 #include "rs3231_i2c.h"
 
 void initialize_INT(void) 
@@ -20,5 +21,9 @@ void int_ISR(void)
 {
     INTF = 0;
     clear_a2f();
-    RD2 = ~RD2;
+    
+    uint8_t time_string = 0;
+    get_time_string(&time_string);
+    
+    RD2 = ~RD2;  // indicate interrupt occurrence
 }

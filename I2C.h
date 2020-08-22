@@ -22,12 +22,6 @@ extern "C" {
 #define BF SSP1STATbits.BF
 #define SSPEN SSP1CON1bits.SSPEN
 #define ACKDT SSP1CON2bits.ACKDT
-
-#define serial_port_enable() SSPEN = 1
-#define serial_port_disable() SSPEN = 0
-#define start() SEN = 1
-#define stop() PEN = 1
-#define restart() RSEN = 1
     
 void I2C_Initialize(void);
 void i2c_ISR(void);
