@@ -42,6 +42,10 @@ static void fetch_hours(uint8_t *dest_reg);
 static void fetch_minutes(uint8_t *dest_reg);
 static void fetch_seconds(uint8_t *dest_reg);
 static void bcd_convert(uint8_t* data);
+static void reverce_bcd_convert(uint8_t* data);
+static void fetch_date(uint8_t* dest_reg);
+static void fetch_month(uint8_t* dest_reg);
+static void fetch_year(uint8_t* dest_reg);
 
 bool rs3231_Check(void)
 // returns 0 if RTC is OK
@@ -100,7 +104,7 @@ void set_alarm_2(uint8_t minutes, bool mode_12h, uint8_t hours, bool a2m2, bool 
 void read_seconds(uint8_t *dest_reg)
 {
     fetch_seconds(dest_reg);    
-    *dest_reg = ((*dest_reg) >> 4) + ((*dest_reg) & 0x0F);
+    reverce_bcd_convert(dest_reg);
 }
 
 void clear_a2f(void)
@@ -113,23 +117,19 @@ void clear_a2f(void)
 void read_minutes(uint8_t *dest_reg)
 {
     fetch_minutes(dest_reg);
-    *dest_reg = ((*dest_reg) >> 4) + ((*dest_reg) & 0x0F);
+    reverce_bcd_convert(dest_reg);
 }
 
 void get_time_string(char* str_ptr)
 {
-    uint8_t seconds = 0;
-    uint8_t minutes = 0;
-    uint8_t hours = 0;
-    
-    fetch_seconds(&seconds);
-    fetch_minutes(&minutes);
-    fetch_hours(&hours);
-    
+    uint8_t seconds = 0;  fetch_seconds(&seconds);
+    uint8_t minutes = 0;  fetch_minutes(&minutes);
+    uint8_t hours = 0;  fetch_hours(&hours);
+        
 //    char* str_ptr = NULL;
     if (hours & 0x40)
     {
-        char time_string[11];
+        unsigned char time_string[11];
         str_ptr = time_string;
         
         time_string[0] = ((hours & 0x10) >> 4) + 48;
@@ -139,7 +139,7 @@ void get_time_string(char* str_ptr)
     }
     else
     {
-        char time_string[8];
+        unsigned char time_string[8];
         str_ptr = time_string;
         
         time_string[0] = ((hours & 0x30) >> 4) + 48;
@@ -151,6 +151,26 @@ void get_time_string(char* str_ptr)
     str_ptr[5] = ':';
     str_ptr[6] = (seconds >> 4) + 48;
     str_ptr[7] = (seconds & 0x0F) + 48;
+}
+
+void get_date_string(char* str_ptr)
+{
+    uint8_t date = 0;  fetch_date(&date);
+    uint8_t month = 0;  fetch_month(&month);
+    uint8_t year = 0;  fetch_year(&year);
+    
+    unsigned char date_string[11];
+    str_ptr = date_string;
+    date_string[0] = (date >> 4) + 48;
+    date_string[1] = (date & 0x0F) + 48;
+    date_string[2] = '.';
+    date_string[3] = ((month >> 4) & 0x1) + 48;
+    date_string[4] = (month & 0x0F) + 48;
+    date_string[6] = '.';
+    date_string[7] = 2 ? month & 128 : 1;
+    date_string[8] = '0';
+    date_string[9] = (year >> 4) + 48;
+    date_string[10] = (year & 0x0F) + 48;
 }
 
 void set_seconds(uint8_t seconds)
@@ -202,6 +222,21 @@ void set_day(uint8_t day)
         return;
     
     master_write_1Byte(MAIN, DAY, day);
+}
+
+static void fetch_date(uint8_t* dest_reg)
+{
+    master_read_1Byte(MAIN, DATE, dest_reg);
+}
+
+static void fetch_month(uint8_t* dest_reg)
+{
+    master_read_1Byte(MAIN, MONTH_CENTURY, dest_reg);
+}
+
+static void fetch_year(uint8_t* dest_reg)
+{
+    master_read_1Byte(MAIN, YEAR, dest_reg);
 }
 
 void set_date(uint8_t date)
@@ -279,4 +314,9 @@ static void bcd_convert(uint8_t* data)
         return;
     
     *data = ((*data / 10) << 4) + *data % 10;
+}
+
+static void reverce_bcd_convert(uint8_t* data)
+{
+    *data = ((*data) >> 4) + ((*data) & 0x0F);
 }

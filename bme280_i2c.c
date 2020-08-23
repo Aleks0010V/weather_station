@@ -19,7 +19,7 @@
 
 static bool check_id (uint8_t addr);
 
-uint8_t current_addr = 0;
+static uint8_t current_addr = 0;
 
 enum main_registers
 {
