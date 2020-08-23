@@ -14,29 +14,6 @@
 extern "C" {
 #endif
 
-enum addresses
-{
-    SECONDS,
-    MINUTES,
-    HOURS,
-    DAY,
-    DATE,
-    MONTH_CENTURY,
-    YEAR,
-    ALARM_1_SECONDS,
-    ALARM_1_MINUTES,
-    ALARM_1_HOURS,
-    ALARM_1_DAY_DATE,
-    ALARM_2_MINUTES,
-    ALARM_2_HOURS,
-    ALARM_2_DAY_DATE,
-    CONTROL,
-    CONTROL_STATUS,
-    AGING_OFFSET,
-    TEMP_HIGH,
-    TEMP_LOW
-}addrs;
-
 bool rs3231_Check(void);
 void read_seconds(uint8_t *dest_reg);
 void read_minutes(uint8_t *dest_reg);
