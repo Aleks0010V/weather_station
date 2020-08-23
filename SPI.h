@@ -12,7 +12,7 @@
 extern "C" {
 #endif
 
-#define SSPEN SSP2CON1bits.SSPEN
+#define SSPEN_2 SSP2CON1bits.SSPEN
 
 void initialize_SPI(void);
 

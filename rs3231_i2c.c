@@ -120,7 +120,7 @@ void read_minutes(uint8_t *dest_reg)
     reverce_bcd_convert(dest_reg);
 }
 
-void get_time_string(char* str_ptr)
+void get_time_string(unsigned char* str_ptr)
 {
     uint8_t seconds = 0;  fetch_seconds(&seconds);
     uint8_t minutes = 0;  fetch_minutes(&minutes);
@@ -153,7 +153,7 @@ void get_time_string(char* str_ptr)
     str_ptr[7] = (seconds & 0x0F) + 48;
 }
 
-void get_date_string(char* str_ptr)
+void get_date_string(unsigned char* str_ptr)
 {
     uint8_t date = 0;  fetch_date(&date);
     uint8_t month = 0;  fetch_month(&month);
@@ -274,7 +274,7 @@ void set_year(uint8_t year, uint8_t century)
     
     uint8_t month_reg = 0;
     master_read_1Byte(MAIN, MONTH_CENTURY, &month_reg);
-    if (century != month_reg & 128)  // update century bit
+    if (century != (month_reg & 128))  // update century bit
     {
         master_write_1Byte(MAIN, MONTH_CENTURY, month_reg | century);
     }

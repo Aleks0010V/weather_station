@@ -9,11 +9,16 @@
 #include <xc.h>
 #include "SPI.h"
 
-#define spi_enable() SSPEN = 1
-#define spi_disable() SSPEN = 0
+#define spi_enable() SSPEN_2 = 1
+#define spi_disable() SSPEN_2 = 0
 
 void initialize_SPI(void)
 {
+    SSP2CLKPPS = 0x14;  // clock input = RC4
+    RC5PPS = 0x16;  // clock output = RC5
+    SSP2DATPPS = 0x1A;  // data input = RD2
+    RD3PPS = 0x17;  // data output = RD3
+    
     SSP2CON1bits.SSPM = 0b1010;  // SPI Master mode, clock = FOSC/(4 * (SSPxADD+1))
     SSP2CON1bits.CKP = 0;
     /*

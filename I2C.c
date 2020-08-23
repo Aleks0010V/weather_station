@@ -11,8 +11,8 @@
 #include <stdbool.h>
 #include "I2C.h"
 
-#define i2c_enable() SSPEN = 1
-#define i2c_disable() SSPEN = 0
+#define i2c_enable() SSPEN_1 = 1
+#define i2c_disable() SSPEN_1 = 0
 #define start() SEN = 1
 #define stop() PEN = 1
 #define restart() RSEN = 1

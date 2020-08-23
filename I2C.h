@@ -20,7 +20,7 @@ extern "C" {
 #define ACKEN SSP1CON2bits.ACKEN
 #define RW SSP1STATbits.RW
 #define BF SSP1STATbits.BF
-#define SSPEN SSP1CON1bits.SSPEN
+#define SSPEN_1 SSP1CON1bits.SSPEN
 #define ACKDT SSP1CON2bits.ACKDT
     
 void I2C_Initialize(void);

@@ -15,7 +15,7 @@
 #define RESERVE 0xEE
 
 #define ID 0xD0
-#define RESET 0xE0
+#define RESET_ADDR 0xE0
 
 static bool check_id (uint8_t addr);
 
