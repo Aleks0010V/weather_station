@@ -76,10 +76,10 @@ void alarm2_every_minute (void)
 
 void set_alarm_2(uint8_t minutes, bool mode_12h, uint8_t hours, bool a2m2, bool a2m3)
 {
-    if (minutes > 60 || minutes < 0 || hours > 60 || hours < 0)
+    if ((minutes > 60) || (minutes < 0) || (hours > 60) || (hours < 0))
         return;
     bool PM = false;
-    if (mode_12h && hours > 12)
+    if (mode_12h && (hours > 12))
     {
         PM = true;
         hours -= 12;
@@ -175,7 +175,7 @@ void get_date_string(unsigned char* str_ptr)
 
 void set_seconds(uint8_t seconds)
 {
-    if (seconds > 60 || seconds < 0)
+    if ((seconds > 60) || (seconds < 0))
         return;
     
     bcd_convert(&seconds);
@@ -185,7 +185,7 @@ void set_seconds(uint8_t seconds)
 
 void set_minutes(uint8_t minutes)
 {
-    if (minutes > 60 || minutes < 0)
+    if ((minutes > 60) || (minutes < 0))
         return;
     
     bcd_convert(&minutes);

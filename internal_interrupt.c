@@ -26,6 +26,4 @@ void int_ISR(void)
     unsigned char* date_string = NULL;
     get_time_string(time_string);
     get_date_string(date_string);
-    
-    RD2 = ~RD2;  // indicate interrupt occurrence
 }

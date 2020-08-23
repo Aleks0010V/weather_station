@@ -18,6 +18,8 @@
 #define restart() RSEN = 1
 
 static void transmit(uint8_t address);
+static bool is_iddle(void);
+static void transmit(uint8_t data);
 
 void I2C_Initialize(void)
 {
