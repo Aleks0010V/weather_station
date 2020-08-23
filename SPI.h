@@ -5,6 +5,9 @@
  * Created on August 22, 2020, 6:51 PM
  */
 
+#include <stdint.h>
+//#include <stdbool.h>
+
 #ifndef SPI_H
 #define	SPI_H
 
@@ -15,6 +18,7 @@ extern "C" {
 #define SSPEN_2 SSP2CON1bits.SSPEN
 
 void initialize_SPI(void);
+void spi_master_write_1Byte (uint8_t data);
 
 
 #ifdef	__cplusplus

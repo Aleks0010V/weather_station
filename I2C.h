@@ -25,9 +25,9 @@ extern "C" {
     
 void I2C_Initialize(void);
 void i2c_ISR(void);
-void master_write_1Byte(uint8_t address, uint8_t reg, uint8_t data);
+void i2c_master_write_1Byte(uint8_t address, uint8_t reg, uint8_t data);
 //void master_write_2Bytes(uint8_t address, uint16_t data);
-void master_read_1Byte(uint8_t address, uint8_t reg, uint8_t* dest_ptr);
+void i2c_master_read_1Byte(uint8_t address, uint8_t reg, uint8_t* dest_ptr);
 
 
 #ifdef	__cplusplus

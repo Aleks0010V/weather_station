@@ -54,7 +54,7 @@ static bool is_iddle(void)
     }
 }
 
-void master_write_1Byte(uint8_t address, uint8_t reg, uint8_t data)
+void i2c_master_write_1Byte(uint8_t address, uint8_t reg, uint8_t data)
 {
     i2c_enable();
     
@@ -69,14 +69,14 @@ void master_write_1Byte(uint8_t address, uint8_t reg, uint8_t data)
     i2c_disable();
 }
 
-void master_write_2Bytes(uint8_t address, uint16_t data)
+void i2c_master_write_2Bytes(uint8_t address, uint16_t data)
 {
     i2c_enable();
     start();
     while(is_iddle());
 }
 
-void master_read_1Byte(uint8_t address, uint8_t reg, uint8_t* dest_ptr)
+void i2c_master_read_1Byte(uint8_t address, uint8_t reg, uint8_t* dest_ptr)
 {
     i2c_enable();
     

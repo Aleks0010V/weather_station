@@ -83,7 +83,7 @@ bool bme280_exists (void)
 static bool check_id (uint8_t addr)
 {
     uint8_t id = 0;
-    master_read_1Byte(addr, 0xD0, &id);
+    i2c_master_read_1Byte(addr, 0xD0, &id);
     if (id == 0x60)
         return true;
     else

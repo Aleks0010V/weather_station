@@ -7,6 +7,7 @@
 
 
 #include <xc.h>
+#include <stdint.h>
 #include "SPI.h"
 
 #define spi_enable() SSPEN_2 = 1
@@ -27,5 +28,11 @@ void initialize_SPI(void)
      */
     
     SSP2ADD  = 0x09;
+    spi_disable();
+}
+
+void spi_master_write_1Byte (uint8_t data)
+{
+    spi_enable();
     spi_disable();
 }
