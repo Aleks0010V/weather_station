@@ -12,6 +12,7 @@
 #include "rs3231_i2c.h"
 #include "I2C.h"
 #include "internal_interrupt.h"
+#include "SPI.h"
 
 void main(void) {
     System_Initialize();
@@ -25,6 +26,7 @@ void main(void) {
     set_hours(0, 21);
     set_seconds(56);
     
+    spi_master_write_1Byte(0x45);
     while (1) {
         
     }
@@ -34,14 +36,13 @@ void main(void) {
 
 void __interrupt() ISR(void)
 {
-    if (TMR0IF & TMR0IE) {
+    if (TMR0IF & TMR0IE)
         t0_ISR();
-    }
-    if (SSP1IF & SSP1IE) {
+    if (SSP1IF & SSP1IE)
         i2c_ISR();
-    }
-    if (INTF & INTE){
+    if (INTF & INTE)
         int_ISR();
-    }
+    if (SSP2IE & SSP2IF)
+        spi_ISR();
     return;
 }

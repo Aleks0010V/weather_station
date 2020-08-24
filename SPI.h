@@ -19,6 +19,7 @@ extern "C" {
 
 void initialize_SPI(void);
 void spi_master_write_1Byte (uint8_t data);
+void spi_ISR(void);
 
 
 #ifdef	__cplusplus

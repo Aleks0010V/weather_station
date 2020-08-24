@@ -26,7 +26,8 @@ void pin_Initiasize(void){
     TRISA = 0b01000000;
     TRISB = 0;
     // MSSP1 as I2C pins should be inputs, MSSP2 SPI RC4 - CLK input
-    TRISC = 0b00011100;
-    // RD2 - MSSP2 SPI input, RD3 - output
-    TRISD = 0b00000100;
+    TRISC = 0b00001100;
+    // RD4 - MSSP2 SPI input, RD6 - output, RD7 - clock input, 
+    // RD6 - clock output
+    TRISD = 0b10010000;
 }
