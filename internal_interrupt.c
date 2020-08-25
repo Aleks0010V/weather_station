@@ -27,5 +27,5 @@ void int_ISR(void)
     unsigned char* date_string = NULL;
     get_time_string(time_string);
     get_date_string(date_string);
-    spi_master_write_1Byte(0xFF);
+//    spi_master_write_1Byte(0xFF);
 }

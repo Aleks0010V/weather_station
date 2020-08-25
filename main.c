@@ -26,7 +26,7 @@ void main(void) {
     set_hours(0, 21);
     set_seconds(56);
     
-    spi_master_write_1Byte(0x45);
+//    spi_master_write_1Byte(0x45);
     while (1) {
         
     }
