@@ -7,8 +7,6 @@
 
 
 #include <xc.h>
-#include "rs3231_i2c.h"
-#include "I2C.h"
 #include "timer_0.h"
 #include <stdint.h>
 

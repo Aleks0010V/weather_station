@@ -8,13 +8,23 @@
 
 #include <xc.h>
 #include <stdint.h>
+#include <stdbool.h>
 #include "SPI.h"
 
 #define spi_enable() SSPEN_2 = 1
 #define spi_disable() SSPEN_2 = 0
 
-static msg *start_msg = NULL;
-static msg *last_msg = NULL;
+typedef struct { 
+    uint8_t con1; 
+    uint8_t stat;
+    uint8_t add;
+    uint8_t operation;
+} spi2_configuration_t;
+
+//con1 == SSPxCON1, stat == SSPxSTAT, add == SSPxADD, operation == Master/Slave
+static const spi2_configuration_t spi2_configuration[] = {   
+    { 0x0, 0xc0, 0x1, 0 }
+};
 
 void initialize_SPI(void)
 {
@@ -23,81 +33,79 @@ void initialize_SPI(void)
     SSP2DATPPS = 0x1C;
     RD6PPS = 0x16;
     RD5PPS = 0x17;
-    
-    SSP2CON1bits.SSPM = 0b1010;  // SPI Master mode, clock = FOSC/(4 * (SSPxADD+1))
-    SSP2CON1bits.CKP = 0;
-    SSP2STATbits.SMP = 0;
-    /*
-     * clock polarity should be same with slave device,
-     * so, it should be an opportunity to change it when slave is switched.
-     */
-    
-    SSP2ADD  = 0x09;
+    //SPI setup
+    SSP2STAT = 0xC0;
+    SSP2CON1 = 0x00;
+    SSP2ADD = 0x01;
+    TRISDbits.TRISD6 = 0;
     spi_disable();
 }
 
-void spi_master_write_1Byte (uint8_t *data, uint8_t len, void (*preload_func)(void), void (*postload_func)(void))
+bool SPI2_Open(spi2_modes_t spi2UniqueConfiguration)
 {
-    // add msgs to the quie
-    for (uint8_t i = 0; i < len; i++)
+    if(!SSP2CON1bits.SSPEN)
     {
-        msg next_msg = {.data = data[i],
-                        .preload_func = preload_func,
-                        .postload_func = postload_func
-        };
-        if (last_msg == NULL)
-        {
-            last_msg = &next_msg;
-            start_msg = last_msg;
-        }
-        else
-        {
-            last_msg->next_msg = &next_msg;
-            last_msg = &next_msg;
-        }
-    }
-    
-    // send first message if SPI is not running
-    if (SSPEN_2 == 0)
-    {
+        SSP2STAT = spi2_configuration[spi2UniqueConfiguration].stat;
+        SSP2CON1 = spi2_configuration[spi2UniqueConfiguration].con1;
+        SSP2CON2 = 0x00;
+        SSP2ADD  = spi2_configuration[spi2UniqueConfiguration].add;
+        TRISDbits.TRISD6 = spi2_configuration[spi2UniqueConfiguration].operation;
         spi_enable();
-        if (start_msg != NULL)
-        {
-            start_msg->preload_func();
-            SSP2BUF = start_msg->data;
-        }
-        else
-            spi_disable();
+        return true;
+    }
+    return false;
+}
+
+void SPI2_Close(void)
+{
+    spi_disable();
+}
+
+uint8_t SPI2_ExchangeByte(uint8_t data)
+{
+    SSP2BUF = data;
+    while(!PIR3bits.SSP2IF);
+    PIR3bits.SSP2IF = 0;
+    return SSP2BUF;
+}
+
+void SPI2_ExchangeBlock(void *block, size_t blockSize)
+{
+    uint8_t *data = block;
+    while(blockSize--)
+    {
+        SSP2BUF = *data;
+        while(!PIR3bits.SSP2IF);
+        PIR3bits.SSP2IF = 0;
+        *data++ = SSP2BUF;
     }
 }
 
-void spi_ISR(void)
+// Half Duplex SPI Functions
+void SPI2_WriteBlock(void *block, size_t blockSize)
 {
-    SSP2IF = 0;
-    
-    // if data was received - execute specific postprocess function
-    if (SSP2STATbits.BF == 1)
+    uint8_t *data = block;
+    while(blockSize--)
     {
-        if (start_msg != NULL)
-            start_msg->postload_func(SSP2BUF);
+        SPI2_ExchangeByte(*data++);
     }
-    
-    // we started from the first message before coming here
-    if (start_msg != NULL)
-    {   
-        // so we need to check that next message exists
-        if (start_msg->next_msg != NULL)
-        {
-            // if yes than we switch pointer to it
-            start_msg = start_msg->next_msg;
-            start_msg->preload_func();  // executing it's pre-load function
-            SSP2BUF = start_msg->data;  // finally, sending data
-        }
-        else
-        {
-            start_msg = NULL;
-            last_msg = NULL;
-            spi_disable();
-        }
+}
+
+void SPI2_ReadBlock(void *block, size_t blockSize)
+{
+    uint8_t *data = block;
+    while(blockSize--)
+    {
+        *data++ = SPI2_ExchangeByte(0);
     }
+}
+
+void SPI2_WriteByte(uint8_t byte)
+{
+    SSP2BUF = byte;
+}
+
+uint8_t SPI2_ReadByte(void)
+{
+    return SSP2BUF;
 }

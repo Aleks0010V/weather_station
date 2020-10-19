@@ -63,15 +63,15 @@ void rs3231_Initialize(void)
     alarm2_every_minute();
     // enable interrupt, enable Alarm 2 interrupt
     clear_a2f();
-    i2c_master_write_1Byte(MAIN, CONTROL, 0x06);
+    i2c_write_data(MAIN, CONTROL, 0x06, 1);
 }
 
 void alarm2_every_minute (void)
 {   
     clear_a2f();
-    i2c_master_write_1Byte(MAIN, ALARM_2_MINUTES, 128);
-    i2c_master_write_1Byte(MAIN, ALARM_2_HOURS, 128);
-    i2c_master_write_1Byte(MAIN, ALARM_2_DAY_DATE, 128);
+    i2c_write_data(MAIN, ALARM_2_MINUTES, 128, 1);
+    i2c_write_data(MAIN, ALARM_2_HOURS, 128, 1);
+    i2c_write_data(MAIN, ALARM_2_DAY_DATE, 128, 1);
 }
 
 void set_alarm_2(uint8_t minutes, bool mode_12h, uint8_t hours, bool a2m2, bool a2m3)
@@ -96,9 +96,9 @@ void set_alarm_2(uint8_t minutes, bool mode_12h, uint8_t hours, bool a2m2, bool 
     if (PM)
         hours += 32;
     
-    i2c_master_write_1Byte(MAIN, ALARM_2_MINUTES, minutes);
-    i2c_master_write_1Byte(MAIN, ALARM_2_HOURS, hours);
-    i2c_master_write_1Byte(MAIN, ALARM_2_DAY_DATE, 128);
+    i2c_write_data(MAIN, ALARM_2_MINUTES, minutes, 1);
+    i2c_write_data(MAIN, ALARM_2_HOURS, hours, 1);
+    i2c_write_data(MAIN, ALARM_2_DAY_DATE, 128, 1);
 }
 
 void read_seconds(uint8_t *dest_reg)
@@ -111,7 +111,7 @@ void clear_a2f(void)
 {
     uint8_t status_control = 0;
     read_status(&status_control);
-    i2c_master_write_1Byte(MAIN, CONTROL_STATUS, status_control & ~(1 << 1));
+    i2c_write_data(MAIN, CONTROL_STATUS, status_control & ~(1 << 1), 1);
 }
 
 void read_minutes(uint8_t *dest_reg)
@@ -180,7 +180,7 @@ void set_seconds(uint8_t seconds)
     
     bcd_convert(&seconds);
     
-    i2c_master_write_1Byte(MAIN, SECONDS, seconds);
+    i2c_write_data(MAIN, SECONDS, seconds, 1);
 }
 
 void set_minutes(uint8_t minutes)
@@ -190,7 +190,7 @@ void set_minutes(uint8_t minutes)
     
     bcd_convert(&minutes);
     
-    i2c_master_write_1Byte(MAIN, MINUTES, minutes);
+    i2c_write_data(MAIN, MINUTES, minutes, 1);
 }
 
 void set_hours(bool mode_12h, uint8_t hours)
@@ -213,7 +213,7 @@ void set_hours(bool mode_12h, uint8_t hours)
         hours += 32;
     }
     
-    i2c_master_write_1Byte(MAIN, HOURS, hours);
+    i2c_write_data(MAIN, HOURS, hours, 1);
 }
 
 void set_day(uint8_t day)
@@ -221,7 +221,7 @@ void set_day(uint8_t day)
     if (day > 7 || day < 1)
         return;
     
-    i2c_master_write_1Byte(MAIN, DAY, day);
+    i2c_write_data(MAIN, DAY, day, 1);
 }
 
 static void fetch_date(uint8_t* dest_reg)
@@ -245,7 +245,7 @@ void set_date(uint8_t date)
         return;
     
     bcd_convert(&date);
-    i2c_master_write_1Byte(MAIN, DATE, date);
+    i2c_write_data(MAIN, DATE, date, 1);
 }
 
 void set_month(uint8_t month)
@@ -258,7 +258,7 @@ void set_month(uint8_t month)
     month_reg = month_reg & 128;  // save century bit
     
     bcd_convert(&month);
-    i2c_master_write_1Byte(MAIN, MONTH_CENTURY, month | month_reg);
+    i2c_write_data(MAIN, MONTH_CENTURY, month | month_reg, 1);
 }
 
 void set_year(uint8_t year, uint8_t century)
@@ -276,11 +276,11 @@ void set_year(uint8_t year, uint8_t century)
     i2c_master_read_1Byte(MAIN, MONTH_CENTURY, &month_reg);
     if (century != (month_reg & 128))  // update century bit
     {
-        i2c_master_write_1Byte(MAIN, MONTH_CENTURY, month_reg | century);
+        i2c_write_data(MAIN, MONTH_CENTURY, month_reg | century, 1);
     }
     
     bcd_convert(&year);
-    i2c_master_write_1Byte(MAIN, YEAR, year);
+    i2c_write_data(MAIN, YEAR, year, 1);
 }
 
 static void read_status(uint8_t *dest_reg)

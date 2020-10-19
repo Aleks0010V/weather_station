@@ -16,10 +16,15 @@
 #define start() SEN = 1
 #define stop() PEN = 1
 #define restart() RSEN = 1
+#define MAX_ARRAY_SIZE 10 + 2
 
 static void transmit(uint8_t address);
 static bool is_iddle(void);
 static void transmit(uint8_t data);
+
+static uint8_t *arr_start = NULL;
+static uint8_t *arr_ptr = NULL;
+static size_t global_size = 0;
 
 void I2C_Initialize(void)
 {
@@ -39,9 +44,48 @@ void I2C_Initialize(void)
 void i2c_ISR(void)
 {
     SSP1IF = 0;
-    if (SEN || PEN || RSEN) {
-    
+    if (RCEN == 0)
+    {
+        for(uint8_t i = 0; i < global_size; i++)
+        {
+            if (SEN) 
+            {
+                transmit(arr_ptr++);
+            }
+            else if (ACKSTAT == 0)
+            {
+                transmit(arr_ptr++);
+            }
+        }
+        while(is_iddle());  
+        stop();  
+        while(is_iddle());
+        i2c_disable();
     }
+}
+
+void i2c_write_data(uint8_t address, uint8_t reg, void *data_ptr, size_t size) 
+{
+    // allocate needed memory
+    uint8_t* ptr = (uint8_t*)data_ptr;
+    // ToDo - need to check if there is enough memory
+    uint8_t array[MAX_ARRAY_SIZE];
+    array[0] = address;
+    array[1] = reg;
+    
+    for(uint8_t i = 2; i < size; i++)
+    {
+        array[i] = *ptr;
+        ptr++;
+    }
+    arr_start = array;
+    arr_ptr = array;
+    
+    // connect
+    global_size = size;
+    i2c_enable();
+    RCEN = 0;
+    start();
 }
 
 static bool is_iddle(void) 
@@ -69,13 +113,6 @@ void i2c_master_write_1Byte(uint8_t address, uint8_t reg, uint8_t data)
     i2c_disable();
 }
 
-void i2c_master_write_2Bytes(uint8_t address, uint16_t data)
-{
-    i2c_enable();
-    start();
-    while(is_iddle());
-}
-
 void i2c_master_read_1Byte(uint8_t address, uint8_t reg, uint8_t* dest_ptr)
 {
     i2c_enable();
@@ -101,5 +138,4 @@ static void transmit(uint8_t data)
 {
     while(is_iddle());
     SSP1BUF = data;
-    while(is_iddle());
 }

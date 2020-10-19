@@ -20,8 +20,9 @@ void main(void) {
     peripheral_int_enable();
     TMR0IF = 0;  t0_int_enable();
     t0_enable();
-    INTF = 0;  INT_enable();
-    
+    SSP1IF = 0; i2c_int_enable();
+//    INTF = 0;  INT_enable();
+//    
     set_minutes(59);
     set_hours(0, 21);
     set_seconds(56);
@@ -42,7 +43,5 @@ void __interrupt() ISR(void)
         i2c_ISR();
     if (INTF & INTE)
         int_ISR();
-    if (SSP2IE & SSP2IF)
-        spi_ISR();
     return;
 }

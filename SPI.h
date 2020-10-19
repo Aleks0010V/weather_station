@@ -3,10 +3,7 @@
  * Author: aleks
  *
  * Created on August 22, 2020, 6:51 PM
- */
-
-#include <stdint.h>
-//#include <stdbool.h>
+*/
 
 #ifndef SPI_H
 #define	SPI_H
@@ -15,19 +12,26 @@
 extern "C" {
 #endif
 
-#define SSPEN_2 SSP2CON1bits.SSPEN
+#include <stdio.h>
+#include <stdint.h>
+#include <stdbool.h>
 
-typedef struct
-{
-    uint8_t data;
-    void (*preload_func)(void);
-    void (*postload_func)(uint8_t data);
-    struct msg *next_msg;
-}msg;
-    
+#define SSPEN_2 SSP2CON1bits.SSPEN 
+
+/* SPI interfaces */
+typedef enum { 
+    SPI2_DEFAULT
+} spi2_modes_t;
+
 void initialize_SPI(void);
-void spi_master_write_1Byte (uint8_t *data, uint8_t len, void (*preload_func)(void), void (*postload_func)(void));
-void spi_ISR(void);
+bool SPI2_Open(spi2_modes_t spi2UniqueConfiguration);
+void SPI2_Close(void);
+uint8_t SPI2_ExchangeByte(uint8_t data);
+void SPI2_ExchangeBlock(void *block, size_t blockSize);
+void SPI2_WriteBlock(void *block, size_t blockSize);
+void SPI2_ReadBlock(void *block, size_t blockSize);
+void SPI2_WriteByte(uint8_t byte);
+uint8_t SPI2_ReadByte(void);
 
 
 #ifdef	__cplusplus

@@ -29,5 +29,5 @@ void System_Initialize(void)
     bme280_Initialize();
     if (rs3231_Check())
         {LATDbits.LATD1 = 1;}
-    initialize_SPI();
+//    initialize_SPI();
 }
