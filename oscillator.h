@@ -12,7 +12,7 @@
 extern "C" {
 #endif
 
-void osc_Initialize(void);
+    void osc_Initialize(void);
 
 
 #ifdef	__cplusplus

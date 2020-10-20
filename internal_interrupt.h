@@ -12,8 +12,8 @@
 extern "C" {
 #endif
 
-void initialize_INT(void);
-void int_ISR(void);
+    void initialize_INT(void);
+    void int_ISR(void);
 
 #define INT_enable() INTE = 1
 #define INT_disable() INTE = 0

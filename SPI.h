@@ -17,17 +17,16 @@ extern "C" {
 
 #define SSPEN_2 SSP2CON1bits.SSPEN
 
-typedef struct
-{
-    uint8_t data;
-    void (*preload_func)(void);
-    void (*postload_func)(uint8_t data);
-    struct msg *next_msg;
-}msg;
-    
-void initialize_SPI(void);
-void spi_master_write_1Byte (uint8_t *data, uint8_t len, void (*preload_func)(void), void (*postload_func)(void));
-void spi_ISR(void);
+    typedef struct {
+        uint8_t data;
+        void (*preload_func)(void);
+        void (*postload_func)(uint8_t data);
+        struct msg *next_msg;
+    } msg;
+
+    void initialize_SPI(void);
+    void spi_master_write_1Byte(uint8_t *data, uint8_t len, void (*preload_func)(void), void (*postload_func)(void));
+    void spi_ISR(void);
 
 
 #ifdef	__cplusplus

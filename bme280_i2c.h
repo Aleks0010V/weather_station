@@ -11,9 +11,9 @@
 #ifdef	__cplusplus
 extern "C" {
 #endif
-    
-bool bme280_exists (void);
-void bme280_Initialize (void);
+
+    bool bme280_exists(void);
+    void bme280_Initialize(void);
 
 
 #ifdef	__cplusplus
