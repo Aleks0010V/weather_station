@@ -22,7 +22,7 @@ void System_Initialize(void)
 {
     osc_Initialize();
     pin_Initiasize();
-    I2C_Initialize();
+    I2C_Initialize_master();
     timer_0_Initialize();
     initialize_INT();
     rs3231_Initialize();
