@@ -17,7 +17,7 @@ extern "C" {
     bool rs3231_Check(void);
     void read_seconds(uint8_t *dest_reg);
     void read_minutes(uint8_t *dest_reg);
-    //void read_hours(uint8_t *dest_reg);
+    void read_hours(uint8_t *dest_reg);
     void get_time_string(unsigned char* str_ptr);
     void get_date_string(unsigned char* str_ptr);
     void set_seconds(uint8_t seconds);

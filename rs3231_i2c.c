@@ -110,11 +110,6 @@ void set_alarm_2(uint8_t minutes, bool mode_12h, uint8_t hours, bool a2m2, bool 
     i2c_write(MAIN, ALARM_2_DAY_DATE, &val, 1);
 }
 
-void read_seconds(uint8_t *dest_reg) {
-    fetch_seconds(dest_reg);
-    reverce_bcd_convert(dest_reg);
-}
-
 void clear_a1f(void) {
     uint8_t status_control = 0;
     read_status(&status_control);
@@ -129,8 +124,18 @@ void clear_a2f(void) {
     i2c_write(MAIN, CONTROL_STATUS, &status_control, 1);
 }
 
+void read_seconds(uint8_t *dest_reg) {
+    fetch_seconds(dest_reg);
+    reverce_bcd_convert(dest_reg);
+}
+
 void read_minutes(uint8_t *dest_reg) {
     fetch_minutes(dest_reg);
+    reverce_bcd_convert(dest_reg);
+}
+
+void read_hours(uint8_t *dest_reg) {
+    fetch_hours(dest_reg);
     reverce_bcd_convert(dest_reg);
 }
 
