@@ -5,6 +5,8 @@
  * Created on August 16, 2020, 5:22 PM
  */
 
+// https://datasheets.maximintegrated.com/en/ds/DS3231.pdf
+
 
 #include <xc.h>
 #include <stdbool.h>
@@ -57,17 +59,26 @@ bool rs3231_Check(void)
 }
 
 void rs3231_Initialize(void) {
-    // enable alarm 2 once per minute
-    alarm2_every_minute();
-    // enable interrupt, enable Alarm 2 interrupt
-    clear_a2f();
-    uint8_t val = 0x06;
+    alarm1_every_second();
+//    alarm2_every_minute();
+    clear_a1f();
+//    clear_a2f();
+    uint8_t val = 0x07;
     i2c_write(MAIN, CONTROL, &val, 1);
+}
+
+void alarm1_every_second(void) {
+    clear_a1f();
+    uint8_t val = 0b10000000;
+    i2c_write(MAIN, ALARM_1_SECONDS, &val, 1);
+    i2c_write(MAIN, ALARM_1_MINUTES, &val, 1);
+    i2c_write(MAIN, ALARM_1_HOURS, &val, 1);
+    i2c_write(MAIN, ALARM_1_DAY_DATE, &val, 1);
 }
 
 void alarm2_every_minute(void) {
     clear_a2f();
-    uint8_t val = 0x06;
+    uint8_t val = 0b10000000;
     i2c_write(MAIN, ALARM_2_MINUTES, &val, 1);
     i2c_write(MAIN, ALARM_2_HOURS, &val, 1);
     i2c_write(MAIN, ALARM_2_DAY_DATE, &val, 1);
@@ -104,10 +115,17 @@ void read_seconds(uint8_t *dest_reg) {
     reverce_bcd_convert(dest_reg);
 }
 
+void clear_a1f(void) {
+    uint8_t status_control = 0;
+    read_status(&status_control);
+    status_control = status_control & 0x11111110;
+    i2c_write(MAIN, CONTROL_STATUS, &status_control, 1);
+}
+
 void clear_a2f(void) {
     uint8_t status_control = 0;
     read_status(&status_control);
-    status_control = status_control & ~(1 << 1);
+    status_control = status_control & 0x11111101;
     i2c_write(MAIN, CONTROL_STATUS, &status_control, 1);
 }
 

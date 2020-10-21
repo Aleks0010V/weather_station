@@ -98,9 +98,9 @@ void i2c_read(uint8_t address, uint8_t reg, uint8_t* dest_ptr, uint8_t size) {
     for (uint8_t i = 0; i < size; i++) {
         while (is_iddle() && !BF);
         *dest_ptr = SSP1BUF;
+        while (is_iddle());
         ACKDT = 1;
         ACKEN = 1;
-        while (is_iddle());
     }
 
     stop();

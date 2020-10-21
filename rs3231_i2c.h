@@ -26,6 +26,8 @@ extern "C" {
     void set_alarm_2(uint8_t minutes, bool mode_12h, uint8_t hours, bool a2m2, bool a2m3);
     void rs3231_Initialize(void);
     void clear_a2f(void);
+    void clear_a1f(void);
+    void alarm1_every_second(void);
     void alarm2_every_minute(void);
 
 #ifdef	__cplusplus

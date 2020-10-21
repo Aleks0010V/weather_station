@@ -19,11 +19,12 @@ void initialize_INT(void) {
 
 void int_ISR(void) {
     INTF = 0;
-    clear_a2f();
+    clear_a1f();
+//    clear_a2f();
 
     unsigned char* time_string = NULL;
     unsigned char* date_string = NULL;
     get_time_string(time_string);
     get_date_string(date_string);
-    //    spi_master_write_1Byte(0xFF);
+//    spi_master_write_1Byte(0xFF);
 }
