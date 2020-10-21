@@ -29,5 +29,5 @@ void System_Initialize(void) {
     if (rs3231_Check()) {
         LATDbits.LATD1 = 1;
     }
-    initialize_SPI();
+    initialize_SPI_master();
 }

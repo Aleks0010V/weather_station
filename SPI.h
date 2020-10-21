@@ -17,15 +17,10 @@ extern "C" {
 
 #define SSPEN_2 SSP2CON1bits.SSPEN
 
-    typedef struct {
-        uint8_t data;
-        void (*preload_func)(void);
-        void (*postload_func)(uint8_t data);
-        struct msg *next_msg;
-    } msg;
-
-    void initialize_SPI(void);
-    void spi_master_write_1Byte(uint8_t *data, uint8_t len, void (*preload_func)(void), void (*postload_func)(void));
+    void initialize_SPI_master(void);
+    void spi_write(uint8_t *data, uint8_t size);
+    void spi_read(uint8_t *dest_reg, uint8_t size);
+    void spi_exchange_block(uint8_t *source, uint8_t *dest_reg);
     void spi_ISR(void);
 
 

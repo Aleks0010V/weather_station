@@ -24,11 +24,11 @@ void main(void) {
     INTF = 0;
     INT_enable();
 
+    // RTC configuration
     set_minutes(59);
     set_hours(0, 21);
     set_seconds(56);
 
-    //    spi_master_write_1Byte(0x45);
     while (1) {
 
     }
