@@ -12,7 +12,7 @@
 extern "C" {
 #endif
 
-void pin_Initiasize(void);
+    void pin_Initiasize(void);
 
 
 #ifdef	__cplusplus

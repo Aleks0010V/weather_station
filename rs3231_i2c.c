@@ -5,6 +5,8 @@
  * Created on August 16, 2020, 5:22 PM
  */
 
+// https://datasheets.maximintegrated.com/en/ds/DS3231.pdf
+
 
 #include <xc.h>
 #include <stdbool.h>
@@ -13,8 +15,7 @@
 
 #define MAIN 0b11010000
 
-enum addresses
-{
+enum addresses {
     SECONDS,
     MINUTES,
     HOURS,
@@ -34,7 +35,7 @@ enum addresses
     AGING_OFFSET,
     TEMP_HIGH,
     TEMP_LOW
-}addrs;
+} addrs;
 
 static void read_status(uint8_t *dest_reg);
 static void read_control(uint8_t *dest_reg);
@@ -50,41 +51,48 @@ static void fetch_year(uint8_t* dest_reg);
 bool rs3231_Check(void)
 // returns 0 if RTC is OK
 {
-//    uint8_t status = 1;
+    //    uint8_t status = 1;
     uint8_t control_reg = 1;
-//    read_status(&status);
+    //    read_status(&status);
     read_control(&control_reg);
     return control_reg >> 7;
 }
 
-void rs3231_Initialize(void)
-{
-    // enable alarm 2 once per minute
-    alarm2_every_minute();
-    // enable interrupt, enable Alarm 2 interrupt
-    clear_a2f();
-    i2c_master_write_1Byte(MAIN, CONTROL, 0x06);
+void rs3231_Initialize(void) {
+    alarm1_every_second();
+//    alarm2_every_minute();
+    clear_a1f();
+//    clear_a2f();
+    uint8_t val = 0x07;
+    i2c_write(MAIN, CONTROL, &val, 1);
 }
 
-void alarm2_every_minute (void)
-{   
-    clear_a2f();
-    i2c_master_write_1Byte(MAIN, ALARM_2_MINUTES, 128);
-    i2c_master_write_1Byte(MAIN, ALARM_2_HOURS, 128);
-    i2c_master_write_1Byte(MAIN, ALARM_2_DAY_DATE, 128);
+void alarm1_every_second(void) {
+    clear_a1f();
+    uint8_t val = 0b10000000;
+    i2c_write(MAIN, ALARM_1_SECONDS, &val, 1);
+    i2c_write(MAIN, ALARM_1_MINUTES, &val, 1);
+    i2c_write(MAIN, ALARM_1_HOURS, &val, 1);
+    i2c_write(MAIN, ALARM_1_DAY_DATE, &val, 1);
 }
 
-void set_alarm_2(uint8_t minutes, bool mode_12h, uint8_t hours, bool a2m2, bool a2m3)
-{
+void alarm2_every_minute(void) {
+    clear_a2f();
+    uint8_t val = 0b10000000;
+    i2c_write(MAIN, ALARM_2_MINUTES, &val, 1);
+    i2c_write(MAIN, ALARM_2_HOURS, &val, 1);
+    i2c_write(MAIN, ALARM_2_DAY_DATE, &val, 1);
+}
+
+void set_alarm_2(uint8_t minutes, bool mode_12h, uint8_t hours, bool a2m2, bool a2m3) {
     if ((minutes > 60) || (minutes < 0) || (hours > 60) || (hours < 0))
         return;
     bool PM = false;
-    if (mode_12h && (hours > 12))
-    {
+    if (mode_12h && (hours > 12)) {
         PM = true;
         hours -= 12;
     }
-    
+
     bcd_convert(&minutes);
     bcd_convert(&hours);
     if (a2m2)
@@ -95,53 +103,58 @@ void set_alarm_2(uint8_t minutes, bool mode_12h, uint8_t hours, bool a2m2, bool 
         hours += 64;
     if (PM)
         hours += 32;
-    
-    i2c_master_write_1Byte(MAIN, ALARM_2_MINUTES, minutes);
-    i2c_master_write_1Byte(MAIN, ALARM_2_HOURS, hours);
-    i2c_master_write_1Byte(MAIN, ALARM_2_DAY_DATE, 128);
+
+    uint8_t val = 0x06;
+    i2c_write(MAIN, ALARM_2_MINUTES, &minutes, 1);
+    i2c_write(MAIN, ALARM_2_HOURS, &hours, 1);
+    i2c_write(MAIN, ALARM_2_DAY_DATE, &val, 1);
 }
 
-void read_seconds(uint8_t *dest_reg)
-{
-    fetch_seconds(dest_reg);    
+void read_seconds(uint8_t *dest_reg) {
+    fetch_seconds(dest_reg);
     reverce_bcd_convert(dest_reg);
 }
 
-void clear_a2f(void)
-{
+void clear_a1f(void) {
     uint8_t status_control = 0;
     read_status(&status_control);
-    i2c_master_write_1Byte(MAIN, CONTROL_STATUS, status_control & ~(1 << 1));
+    status_control = status_control & 0x11111110;
+    i2c_write(MAIN, CONTROL_STATUS, &status_control, 1);
 }
 
-void read_minutes(uint8_t *dest_reg)
-{
+void clear_a2f(void) {
+    uint8_t status_control = 0;
+    read_status(&status_control);
+    status_control = status_control & 0x11111101;
+    i2c_write(MAIN, CONTROL_STATUS, &status_control, 1);
+}
+
+void read_minutes(uint8_t *dest_reg) {
     fetch_minutes(dest_reg);
     reverce_bcd_convert(dest_reg);
 }
 
-void get_time_string(unsigned char* str_ptr)
-{
-    uint8_t seconds = 0;  fetch_seconds(&seconds);
-    uint8_t minutes = 0;  fetch_minutes(&minutes);
-    uint8_t hours = 0;  fetch_hours(&hours);
-        
-//    char* str_ptr = NULL;
-    if (hours & 0x40)
-    {
+void get_time_string(unsigned char* str_ptr) {
+    uint8_t seconds = 0;
+    fetch_seconds(&seconds);
+    uint8_t minutes = 0;
+    fetch_minutes(&minutes);
+    uint8_t hours = 0;
+    fetch_hours(&hours);
+
+    //    char* str_ptr = NULL;
+    if (hours & 0x40) {
         unsigned char time_string[11];
         str_ptr = time_string;
-        
+
         time_string[0] = ((hours & 0x10) >> 4) + 48;
         time_string[8] = ' ';
         time_string[9] = (hours & 0x20) ? 'P' : 'A';
         time_string[10] = 'M';
-    }
-    else
-    {
+    } else {
         unsigned char time_string[8];
         str_ptr = time_string;
-        
+
         time_string[0] = ((hours & 0x30) >> 4) + 48;
     }
     str_ptr[1] = (hours & 0x0F) + 48;
@@ -153,12 +166,14 @@ void get_time_string(unsigned char* str_ptr)
     str_ptr[7] = (seconds & 0x0F) + 48;
 }
 
-void get_date_string(unsigned char* str_ptr)
-{
-    uint8_t date = 0;  fetch_date(&date);
-    uint8_t month = 0;  fetch_month(&month);
-    uint8_t year = 0;  fetch_year(&year);
-    
+void get_date_string(unsigned char* str_ptr) {
+    uint8_t date = 0;
+    fetch_date(&date);
+    uint8_t month = 0;
+    fetch_month(&month);
+    uint8_t year = 0;
+    fetch_year(&year);
+
     unsigned char date_string[11];
     str_ptr = date_string;
     date_string[0] = (date >> 4) + 48;
@@ -173,96 +188,86 @@ void get_date_string(unsigned char* str_ptr)
     date_string[10] = (year & 0x0F) + 48;
 }
 
-void set_seconds(uint8_t seconds)
-{
+void set_seconds(uint8_t seconds) {
     if ((seconds > 60) || (seconds < 0))
         return;
-    
+
     bcd_convert(&seconds);
-    
-    i2c_master_write_1Byte(MAIN, SECONDS, seconds);
+
+    i2c_write(MAIN, SECONDS, &seconds, 1);
 }
 
-void set_minutes(uint8_t minutes)
-{
+void set_minutes(uint8_t minutes) {
     if ((minutes > 60) || (minutes < 0))
         return;
-    
+
     bcd_convert(&minutes);
-    
-    i2c_master_write_1Byte(MAIN, MINUTES, minutes);
+
+    i2c_write(MAIN, MINUTES, &minutes, 1);
 }
 
-void set_hours(bool mode_12h, uint8_t hours)
-{
+void set_hours(bool mode_12h, uint8_t hours) {
     bool PM = false;
     if (hours < 0)
         return;
-    if (mode_12h && hours > 12)
-    {
+    if (mode_12h && hours > 12) {
         PM = true;
         hours -= 12;
     }
     if (!mode_12h && hours > 24)
         return;
-    
+
     bcd_convert(&hours);
     if (mode_12h)
         hours += 64;
-    if (PM){
+    if (PM) {
         hours += 32;
     }
-    
-    i2c_master_write_1Byte(MAIN, HOURS, hours);
+
+    i2c_write(MAIN, HOURS, &hours, 1);
 }
 
-void set_day(uint8_t day)
-{
+void set_day(uint8_t day) {
     if (day > 7 || day < 1)
         return;
-    
-    i2c_master_write_1Byte(MAIN, DAY, day);
+
+    i2c_write(MAIN, DAY, &day, 1);
 }
 
-static void fetch_date(uint8_t* dest_reg)
-{
-    i2c_master_read_1Byte(MAIN, DATE, dest_reg);
+static void fetch_date(uint8_t* dest_reg) {
+    i2c_read(MAIN, DATE, dest_reg, 1);
 }
 
-static void fetch_month(uint8_t* dest_reg)
-{
-    i2c_master_read_1Byte(MAIN, MONTH_CENTURY, dest_reg);
+static void fetch_month(uint8_t* dest_reg) {
+    i2c_read(MAIN, MONTH_CENTURY, dest_reg, 1);
 }
 
-static void fetch_year(uint8_t* dest_reg)
-{
-    i2c_master_read_1Byte(MAIN, YEAR, dest_reg);
+static void fetch_year(uint8_t* dest_reg) {
+    i2c_read(MAIN, YEAR, dest_reg, 1);
 }
 
-void set_date(uint8_t date)
-{
+void set_date(uint8_t date) {
     if (date > 31 || date < 1)
         return;
-    
+
     bcd_convert(&date);
-    i2c_master_write_1Byte(MAIN, DATE, date);
+    i2c_write(MAIN, DATE, &date, 1);
 }
 
-void set_month(uint8_t month)
-{
+void set_month(uint8_t month) {
     if (month > 12 || month < 1)
         return;
-    
+
     uint8_t month_reg = 0;
-    i2c_master_read_1Byte(MAIN, MONTH_CENTURY, &month_reg);
-    month_reg = month_reg & 128;  // save century bit
-    
+    i2c_read(MAIN, MONTH_CENTURY, &month_reg, 1);
+    month_reg = month_reg & 128; // save century bit
+
     bcd_convert(&month);
-    i2c_master_write_1Byte(MAIN, MONTH_CENTURY, month | month_reg);
+    month = month | month_reg;
+    i2c_write(MAIN, MONTH_CENTURY, &month, 1);
 }
 
-void set_year(uint8_t year, uint8_t century)
-{
+void set_year(uint8_t year, uint8_t century) {
     if (year > 99 || year < 0)
         return;
     if (century != 20 && century != 21)
@@ -271,52 +276,46 @@ void set_year(uint8_t year, uint8_t century)
         century = 0;
     else if (century == 21)
         century = 128;
-    
+
     uint8_t month_reg = 0;
-    i2c_master_read_1Byte(MAIN, MONTH_CENTURY, &month_reg);
-    if (century != (month_reg & 128))  // update century bit
+    i2c_read(MAIN, MONTH_CENTURY, &month_reg, 1);
+    if (century != (month_reg & 128)) // update century bit
     {
-        i2c_master_write_1Byte(MAIN, MONTH_CENTURY, month_reg | century);
+        month_reg = month_reg | century;
+        i2c_write(MAIN, MONTH_CENTURY, &month_reg, 1);
     }
-    
+
     bcd_convert(&year);
-    i2c_master_write_1Byte(MAIN, YEAR, year);
+    i2c_write(MAIN, YEAR, &year, 1);
 }
 
-static void read_status(uint8_t *dest_reg)
-{
-    i2c_master_read_1Byte(MAIN, CONTROL_STATUS, dest_reg);
+static void read_status(uint8_t *dest_reg) {
+    i2c_read(MAIN, CONTROL_STATUS, dest_reg, 1);
 }
 
-static void read_control(uint8_t *dest_reg)
-{
-    i2c_master_read_1Byte(MAIN, CONTROL, dest_reg);
+static void read_control(uint8_t *dest_reg) {
+    i2c_read(MAIN, CONTROL, dest_reg, 1);
 }
 
-static void fetch_seconds(uint8_t *dest_reg)
-{
-    i2c_master_read_1Byte(MAIN, SECONDS, dest_reg);
+static void fetch_seconds(uint8_t *dest_reg) {
+    i2c_read(MAIN, SECONDS, dest_reg, 1);
 }
 
-static void fetch_minutes(uint8_t *dest_reg)
-{
-    i2c_master_read_1Byte(MAIN, MINUTES, dest_reg);
+static void fetch_minutes(uint8_t *dest_reg) {
+    i2c_read(MAIN, MINUTES, dest_reg, 1);
 }
 
-static void fetch_hours(uint8_t *dest_reg)
-{
-    i2c_master_read_1Byte(MAIN, HOURS, dest_reg);
+static void fetch_hours(uint8_t *dest_reg) {
+    i2c_read(MAIN, HOURS, dest_reg, 1);
 }
 
-static void bcd_convert(uint8_t* data)
-{
+static void bcd_convert(uint8_t* data) {
     if (*data > 99)
         return;
-    
+
     *data = ((*data / 10) << 4) + *data % 10;
 }
 
-static void reverce_bcd_convert(uint8_t* data)
-{
+static void reverce_bcd_convert(uint8_t* data) {
     *data = ((*data) >> 4) + ((*data) & 0x0F);
 }

@@ -14,19 +14,21 @@
 extern "C" {
 #endif
 
-bool rs3231_Check(void);
-void read_seconds(uint8_t *dest_reg);
-void read_minutes(uint8_t *dest_reg);
-//void read_hours(uint8_t *dest_reg);
-void get_time_string(unsigned char* str_ptr);
-void get_date_string(unsigned char* str_ptr);
-void set_seconds(uint8_t seconds);
-void set_minutes(uint8_t minutes);
-void set_hours(bool mode_12h, uint8_t hours);
-void set_alarm_2(uint8_t minutes, bool mode_12h, uint8_t hours, bool a2m2, bool a2m3);
-void rs3231_Initialize(void);
-void clear_a2f(void);
-void alarm2_every_minute (void);
+    bool rs3231_Check(void);
+    void read_seconds(uint8_t *dest_reg);
+    void read_minutes(uint8_t *dest_reg);
+    //void read_hours(uint8_t *dest_reg);
+    void get_time_string(unsigned char* str_ptr);
+    void get_date_string(unsigned char* str_ptr);
+    void set_seconds(uint8_t seconds);
+    void set_minutes(uint8_t minutes);
+    void set_hours(bool mode_12h, uint8_t hours);
+    void set_alarm_2(uint8_t minutes, bool mode_12h, uint8_t hours, bool a2m2, bool a2m3);
+    void rs3231_Initialize(void);
+    void clear_a2f(void);
+    void clear_a1f(void);
+    void alarm1_every_second(void);
+    void alarm2_every_minute(void);
 
 #ifdef	__cplusplus
 }

@@ -16,7 +16,7 @@ extern "C" {
 #define interrupt_disable() GIE = 0
 #define peripheral_int_enable() PEIE = 1
 #define peripheral_int_disable() PEIE = 0
-void System_Initialize(void);
+    void System_Initialize(void);
 
 
 #ifdef	__cplusplus

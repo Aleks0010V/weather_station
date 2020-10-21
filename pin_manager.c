@@ -8,20 +8,20 @@
 
 #include <xc.h>
 
-void pin_Initiasize(void){
-    
+void pin_Initiasize(void) {
+
     // clear output register
     LATA = 0;
     LATB = 0;
     LATC = 0;
     LATD = 0;
-    
+
     // 0 - digital, 1 - analog
     ANSELA = 0;
     ANSELB = 0;
     ANSELC = 0;
     ANSELD = 0;
-    
+
     // 0 - output, 1 - input
     TRISA = 0b01000000;
     TRISB = 0;

@@ -18,16 +18,16 @@
 #include "SPI.h"
 #include "bme280_i2c.h"
 
-void System_Initialize(void)
-{
+void System_Initialize(void) {
     osc_Initialize();
     pin_Initiasize();
-    I2C_Initialize();
+    I2C_Initialize_master();
     timer_0_Initialize();
     initialize_INT();
     rs3231_Initialize();
     bme280_Initialize();
-    if (rs3231_Check())
-        {LATDbits.LATD1 = 1;}
+    if (rs3231_Check()) {
+        LATDbits.LATD1 = 1;
+    }
     initialize_SPI();
 }

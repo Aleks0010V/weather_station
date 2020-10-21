@@ -11,18 +11,17 @@
 #include "rs3231_i2c.h"
 #include "SPI.h"
 
-void initialize_INT(void) 
-{
-    INTPPS = 0x06;  // internal interrupt pin is RA6
+void initialize_INT(void) {
+    INTPPS = 0x06; // internal interrupt pin is RA6
     INTEDG = 0;
     return;
 }
 
-void int_ISR(void)
-{
+void int_ISR(void) {
     INTF = 0;
-    clear_a2f();
-    
+    clear_a1f();
+//    clear_a2f();
+
     unsigned char* time_string = NULL;
     unsigned char* date_string = NULL;
     get_time_string(time_string);
