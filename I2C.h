@@ -14,6 +14,7 @@
 extern "C" {
 #endif
 
+// to port this lib you should map these directives to registers of your MCU
 #define SEN SSP1CON2bits.SEN
 #define RSEN SSP1CON2bits.RSEN
 #define PEN SSP1CON2bits.PEN

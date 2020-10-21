@@ -11,6 +11,8 @@
 #include <stdbool.h>
 #include "I2C.h"
 
+// to port this lib you should map these directives to registers of your MCU
+// also you need to replace SSP1BUF register
 #define i2c_enable() SSPEN_1 = 1
 #define i2c_disable() SSPEN_1 = 0
 #define start() SEN = 1
@@ -20,6 +22,7 @@
 static bool is_iddle(void);
 static void transmit(uint8_t *data);
 static void I2C_set_pins(void);
+static void receive(uint8_t *dest_reg);
 
 void I2C_Initialize_master(void) {
     I2C_set_pins();
@@ -96,9 +99,7 @@ void i2c_read(uint8_t address, uint8_t reg, uint8_t* dest_ptr, uint8_t size) {
     transmit(&read_addr);
     RCEN = 1;
     for (uint8_t i = 0; i < size; i++) {
-        while (is_iddle() && !BF);
-        *dest_ptr = SSP1BUF;
-        while (is_iddle());
+        receive(dest_ptr);
         ACKDT = 1;
         ACKEN = 1;
     }
@@ -111,6 +112,12 @@ void i2c_read(uint8_t address, uint8_t reg, uint8_t* dest_ptr, uint8_t size) {
 static void transmit(uint8_t *data) {
     while (is_iddle());
     SSP1BUF = *data;
+    while (is_iddle());
+}
+
+static void receive(uint8_t *dest_reg) {
+    while (is_iddle() && !BF);
+    *dest_reg = SSP1BUF;
     while (is_iddle());
 }
 
