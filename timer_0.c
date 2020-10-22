@@ -8,7 +8,7 @@
 
 #include <xc.h>
 #include "rs3231_i2c.h"
-#include "I2C.h"
+#include "SPI.h"
 #include "timer_0.h"
 #include <stdint.h>
 
@@ -31,5 +31,12 @@ void t0_ISR(void) {
     TMR0L = 0b11011100;
 
     LATA0 = ~LATA0;
+    
+    uint8_t test[3];
+    test[0] = 1;
+    test[1] = 11;
+    test[2] = 111;
+    spi_write(test, 3);
+    
     t0_enable();
 }

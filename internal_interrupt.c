@@ -22,9 +22,8 @@ void int_ISR(void) {
     clear_a1f();
 //    clear_a2f();
 
-    unsigned char* time_string = NULL;
-    unsigned char* date_string = NULL;
-    get_time_string(time_string);
-    get_date_string(date_string);
-//    spi_master_write_1Byte(0xFF);
+//    unsigned char time_string[8];
+//    unsigned char date_string[10];
+//    get_time_string(&time_string[0]);
+//    get_date_string(&date_string[0]);
 }
