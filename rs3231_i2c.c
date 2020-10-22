@@ -149,18 +149,12 @@ void get_time_string(unsigned char* str_ptr) {
 
     //    char* str_ptr = NULL;
     if (hours & 0x40) {
-        unsigned char time_string[11];
-        str_ptr = time_string;
-
-        time_string[0] = ((hours & 0x10) >> 4) + 48;
-        time_string[8] = ' ';
-        time_string[9] = (hours & 0x20) ? 'P' : 'A';
-        time_string[10] = 'M';
+        str_ptr[0] = ((hours & 0x10) >> 4) + 48;
+        str_ptr[8] = ' ';
+        str_ptr[9] = (hours & 0x20) ? 'P' : 'A';
+        str_ptr[10] = 'M';
     } else {
-        unsigned char time_string[8];
-        str_ptr = time_string;
-
-        time_string[0] = ((hours & 0x30) >> 4) + 48;
+        str_ptr[0] = ((hours & 0x30) >> 4) + 48;
     }
     str_ptr[1] = (hours & 0x0F) + 48;
     str_ptr[2] = ':';
@@ -178,19 +172,16 @@ void get_date_string(unsigned char* str_ptr) {
     fetch_month(&month);
     uint8_t year = 0;
     fetch_year(&year);
-
-    unsigned char date_string[11];
-    str_ptr = date_string;
-    date_string[0] = (date >> 4) + 48;
-    date_string[1] = (date & 0x0F) + 48;
-    date_string[2] = '.';
-    date_string[3] = ((month >> 4) & 0x1) + 48;
-    date_string[4] = (month & 0x0F) + 48;
-    date_string[6] = '.';
-    date_string[7] = 2 ? month & 128 : 1;
-    date_string[8] = '0';
-    date_string[9] = (year >> 4) + 48;
-    date_string[10] = (year & 0x0F) + 48;
+    str_ptr[0] = (date >> 4) + 48;
+    str_ptr[1] = (date & 0x0F) + 48;
+    str_ptr[2] = '.';
+    str_ptr[3] = ((month >> 4) & 0x1) + 48;
+    str_ptr[4] = (month & 0x0F) + 48;
+    str_ptr[5] = '.';
+    str_ptr[6] = '2' ? month & 128 : '1';
+    str_ptr[7] = '0' ? month & 128 : '9';
+    str_ptr[8] = (year >> 4) + 48;
+    str_ptr[9] = (year & 0x0F) + 48;
 }
 
 void set_seconds(uint8_t seconds) {
