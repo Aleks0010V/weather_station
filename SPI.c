@@ -13,6 +13,7 @@
 
 #define spi_enable() SSPEN_2 = 1
 #define spi_disable() SSPEN_2 = 0
+#define BF SSP2STATbits.BF
 
 static void SPI_set_pins(void);
 static void SPI_set_mode(bool CKP, bool CMP);
@@ -27,15 +28,34 @@ void initialize_SPI_master(bool CKP, bool CMP) {
 }
 
 void spi_write(uint8_t *data, uint8_t size) {
-    
+    spi_enable();
+    uint8_t dummy;
+    for(uint8_t i = 0; i < size; i++) {
+        do {
+            dummy = SSP2BUF;
+        } while(BF);
+        SSP2BUF = *data;
+        data++;
+    }
+    spi_disable();
 }
 
 void spi_read(uint8_t *dest_reg, uint8_t size) {
-    
+    spi_enable();
+    for(uint8_t i = 0; i < size; i++) {
+        while(!BF);
+        dest_reg[i] = SSP2BUF;
+    }
+    spi_disable();
 }
 
 void spi_exchange_block(uint8_t *source, uint8_t *dest_reg) {
-    
+    spi_enable();
+    while(BF);
+    SSP2BUF = *source;
+    while(BF);
+    *dest_reg = SSP2BUF;
+    spi_disable();
 }
 
 void spi_ISR(void) {
@@ -43,10 +63,10 @@ void spi_ISR(void) {
 }
 
 static void SPI_set_pins(void) {
-    SSP2CLKPPS = 0x18;  // RD0 - clock input - SCK
-    SSP2DATPPS = 0x1A;  // RD2 - data input - SDI
-    RD3PPS = 0x17;  // SDO2 - data output
-    RD1PPS = 0x16;  // SCK2 - clock output
+//    SSP2CLKPPS = 0x18;  // RD0 - clock input - SCK
+    SSP2DATPPS = 0x1A;  TRISDbits.TRISD2 = 1; // RD2 - data input - SDI
+    RD3PPS = 0x17;  TRISDbits.TRISD3 = 0; // SDO2 - data output
+    RD1PPS = 0x16;  TRISDbits.TRISD1 = 0; // SCK2 - clock output
 }
 
 static void SPI_set_mode(bool CKP, bool CMP) {
