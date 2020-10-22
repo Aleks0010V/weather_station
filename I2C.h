@@ -21,7 +21,6 @@ extern "C" {
 #define RCEN SSP1CON2bits.RCEN
 #define ACKEN SSP1CON2bits.ACKEN
 #define RW SSP1STATbits.RW
-#define BF SSP1STATbits.BF
 #define SSPEN_1 SSP1CON1bits.SSPEN
 #define ACKDT SSP1CON2bits.ACKDT
 #define ACKSTAT SSP1CON2bits.ACKSTAT

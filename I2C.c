@@ -18,6 +18,7 @@
 #define start() SEN = 1
 #define stop() PEN = 1
 #define restart() RSEN = 1
+#define BF SSP1STATbits.BF
 
 static bool is_iddle(void);
 static void transmit(uint8_t *data);
