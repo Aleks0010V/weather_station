@@ -30,6 +30,6 @@ void t0_ISR(void) {
     TMR0H = 0b00001011; // pre = 16, post = 1, out = 1 sec
     TMR0L = 0b11011100;
 
-    LATD0 = ~LATD0;
+    LATA0 = ~LATA0;
     t0_enable();
 }

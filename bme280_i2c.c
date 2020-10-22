@@ -8,6 +8,7 @@
 
 #include <xc.h>
 #include <stdbool.h>
+#include "system.h"
 #include "I2C.h"
 #include "bme280_i2c.h"
 
@@ -18,6 +19,7 @@
 #define RESET_ADDR 0xE0
 
 static bool check_id(uint8_t addr);
+static void reset(void);
 
 static uint8_t current_addr = 0;
 
@@ -50,7 +52,7 @@ enum calib_1 {
 
 void bme280_Initialize(void) {
     if (bme280_exists()) {
-
+        reset();
     } else {
         LATDbits.LATD1 = 1;
         return;
@@ -70,9 +72,14 @@ bool bme280_exists(void) {
 
 static bool check_id(uint8_t addr) {
     uint8_t id = 0;
-    i2c_read(addr, 0xD0, &id, 1);
+    i2c_read(addr, ID, &id, 1);
     if (id == 0x60)
         return true;
     else
         return false;
+}
+
+static void reset(void) {
+    uint8_t reset_value = 0xB6;
+    i2c_write(current_addr, RESET_ADDR, &reset_value, 1);
 }

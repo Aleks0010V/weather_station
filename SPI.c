@@ -8,28 +8,21 @@
 
 #include <xc.h>
 #include <stdint.h>
+#include <stdbool.h>
 #include "SPI.h"
 
 #define spi_enable() SSPEN_2 = 1
 #define spi_disable() SSPEN_2 = 0
 
-void initialize_SPI_master(void) {
-    //Setup PPS Pins
-    SSP2CLKPPS = 0x1E;
-    SSP2DATPPS = 0x1C;
-    RD6PPS = 0x16;
-    RD5PPS = 0x17;
+static void SPI_set_pins(void);
+static void SPI_set_mode(bool CKP, bool CMP);
 
-    SSP2CON1bits.SSPM = 0b1010; // SPI Master mode, clock = FOSC/(4 * (SSPxADD+1))
-    SSP2CON1bits.CKP = 0;
-    SSP2STATbits.SMP = 0;
-    /*
-     * clock polarity should be same with slave device,
-     * so, it should be an opportunity to change it when slave is switched.
-     */
-
+void initialize_SPI_master(bool CKP, bool CMP) {
+    SPI_set_pins();
+    SSP2CON1bits.SSPM = 0b0000; // SPI Master mode, clock = FOSC/4
+    SPI_set_mode(CKP, CMP);
 //    SSP2IE = 0;
-    SSP2ADD = 0x09;
+//    SSP2ADD = 0x09;
     spi_disable();
 }
 
@@ -47,4 +40,20 @@ void spi_exchange_block(uint8_t *source, uint8_t *dest_reg) {
 
 void spi_ISR(void) {
     SSP2IF = 0;
+}
+
+static void SPI_set_pins(void) {
+    SSP2CLKPPS = 0x18;  // RD0 - clock input - SCK
+    SSP2DATPPS = 0x1A;  // RD2 - data input - SDI
+    RD3PPS = 0x17;  // SDO2 - data output
+    RD1PPS = 0x16;  // SCK2 - clock output
+}
+
+static void SPI_set_mode(bool CKP, bool CMP) {
+    /*
+     * clock polarity should be same with slave device,
+     * so, it should be an opportunity to change it when slave is switched.
+     */
+    SSP2CON1bits.CKP = CKP;
+    SSP2STATbits.SMP = CMP;
 }

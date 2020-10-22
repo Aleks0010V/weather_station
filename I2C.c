@@ -65,7 +65,7 @@ void i2c_write(uint8_t address, uint8_t reg, uint8_t *data, uint8_t size) {
 
     if (i2c_open(address, reg) == true) {
         for (uint8_t i = 0; i < size; i++)
-            transmit(data[i]);
+            transmit(&data[i]);
     }
 
     stop();

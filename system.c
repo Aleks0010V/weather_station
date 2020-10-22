@@ -8,6 +8,9 @@
 
 #include <xc.h>
 #include <pic16f18875.h>
+#include <stdint.h>
+#include <stdbool.h>
+#include "system.h"
 #include "config.h"
 #include "oscillator.h"
 #include "pin_manager.h"
@@ -27,7 +30,14 @@ void System_Initialize(void) {
     rs3231_Initialize();
     bme280_Initialize();
     if (rs3231_Check()) {
-        LATDbits.LATD1 = 1;
+        LATBbits.LATB5 = 1;
     }
-    initialize_SPI_master();
+    initialize_SPI_master(false, false);
+}
+
+word pack_word(uint8_t lsb, uint8_t msb) {
+    word result;
+    result.bytes[0] = lsb;
+    result.bytes[1] = msb;
+    return result;
 }
