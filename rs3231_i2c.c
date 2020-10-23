@@ -178,8 +178,8 @@ void get_date_string(unsigned char* str_ptr) {
     str_ptr[3] = ((month >> 4) & 0x1) + 48;
     str_ptr[4] = (month & 0x0F) + 48;
     str_ptr[5] = '.';
-    str_ptr[6] = '2' ? month & 128 : '1';
-    str_ptr[7] = '0' ? month & 128 : '9';
+    str_ptr[6] = (month & 128) ? '2' : '1';
+    str_ptr[7] = (month & 128) ? '0' : '9';
     str_ptr[8] = (year >> 4) + 48;
     str_ptr[9] = (year & 0x0F) + 48;
 }
