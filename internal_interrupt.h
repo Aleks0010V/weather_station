@@ -12,7 +12,7 @@
 extern "C" {
 #endif
 
-    void initialize_INT(void);
+    void int_i_initialize(void);
     void int_ISR(void);
 
 #define INT_enable() INTE = 1

@@ -26,7 +26,7 @@ void System_Initialize(void) {
     pin_Initiasize();
     I2C_Initialize_master();
     timer_0_Initialize();
-    initialize_INT();
+    int_i_initialize();
     rs3231_Initialize();
     bme280_Initialize();
     if (rs3231_Check()) {

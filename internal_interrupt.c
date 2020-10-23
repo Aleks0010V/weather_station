@@ -11,7 +11,7 @@
 #include "rs3231_i2c.h"
 #include "SPI.h"
 
-void initialize_INT(void) {
+void int_i_initialize(void) {
     INTPPS = 0x06; // internal interrupt pin is RA6
     INTEDG = 0;
     return;
