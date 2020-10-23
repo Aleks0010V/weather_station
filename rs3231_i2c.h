@@ -23,6 +23,9 @@ extern "C" {
     void set_seconds(uint8_t seconds);
     void set_minutes(uint8_t minutes);
     void set_hours(bool mode_12h, uint8_t hours);
+    void set_date(uint8_t date);
+    void set_month(uint8_t month);
+    void set_year(uint8_t year, uint8_t century);
     void set_alarm_2(uint8_t minutes, bool mode_12h, uint8_t hours, bool a2m2, bool a2m3);
     void rs3231_Initialize(void);
     void clear_a2f(void);

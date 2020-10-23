@@ -28,6 +28,9 @@ void main(void) {
     set_minutes(59);
     set_hours(0, 21);
     set_seconds(56);
+    set_date(23);
+    set_month(10);
+    set_year(20, 21);
 
     while (1) {
 
