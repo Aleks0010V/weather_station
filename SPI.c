@@ -18,11 +18,11 @@
 static void SPI_set_pins(void);
 static void SPI_set_mode(bool CKP, bool CKE);
 
-void initialize_SPI_master(bool CKP, bool CMP) {
+void initialize_SPI_master(bool CKP, bool CKE) {
     spi_disable();
     SPI_set_pins();
     SSP2CON1bits.SSPM = 0b0000; // SPI Master mode, clock = FOSC/4
-    SPI_set_mode(CKP, CMP);
+    SPI_set_mode(CKP, CKE);
 //    SSP2IE = 0;
     SSP2ADD = 0x1;
 }
