@@ -65,8 +65,8 @@ void i2c_write(uint8_t address, uint8_t reg, uint8_t *data, uint8_t size) {
     start();
 
     if (i2c_open(address, reg) == true) {
-        for (uint8_t i = 0; i < size; i++)
-            transmit(&data[i]);
+        while(size--)
+            transmit(data++);
     }
 
     stop();
@@ -99,8 +99,8 @@ void i2c_read(uint8_t address, uint8_t reg, uint8_t* dest_ptr, uint8_t size) {
     uint8_t read_addr = address + 1;
     transmit(&read_addr);
     RCEN = 1;
-    for (uint8_t i = 0; i < size; i++) {
-        receive(dest_ptr);
+    while(size--) {
+        receive(dest_ptr++);
         ACKDT = 1;
         ACKEN = 1;
     }
