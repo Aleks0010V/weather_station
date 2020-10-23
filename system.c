@@ -20,6 +20,7 @@
 #include "internal_interrupt.h"
 #include "SPI.h"
 #include "bme280_i2c.h"
+#include "SD.h"
 
 void System_Initialize(void) {
     osc_Initialize();
@@ -33,11 +34,12 @@ void System_Initialize(void) {
         LATBbits.LATB5 = 1;
     }
     initialize_SPI_master(false, false);
+    SD_initialize();
 }
 
 word pack_word(uint8_t lsb, uint8_t msb) {
     word result;
-    result.bytes[0] = lsb;
-    result.bytes[1] = msb;
+    result.bytes[0] = msb;
+    result.bytes[1] = lsb;
     return result;
 }
