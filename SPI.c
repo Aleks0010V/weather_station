@@ -27,25 +27,25 @@ void initialize_SPI_master(bool CKP, bool CKE) {
     SSP2ADD = 0x1;
 }
 
-void spi_write(uint8_t *data, uint8_t size) {
+void spi_write(void *data, uint8_t size) {
     spi_enable();
     uint8_t dummy;
+    uint8_t *ptr = (uint8_t *)data;
     while(size--) {
-        do {
-            dummy = SSP2BUF;
-        } while(BF);
-        SSP2BUF = *data++;
+        SSP2BUF = *ptr++;
+        while(!BF);
+        dummy = SSP2BUF;
     }
     spi_disable();
 }
 
-void spi_read(uint8_t *dest_reg, uint8_t size) {
+void spi_read(void *dest_reg, uint8_t size) {
     spi_enable();
+    uint8_t *ptr = (uint8_t *)dest_reg;
     while(size--) {
-        do {
-            SSP2BUF = 0;
-        } while(!BF);
-        *dest_reg++ = SSP2BUF;
+        SSP2BUF = 0;
+        while(!BF);
+        *ptr++ = SSP2BUF;
     }
     spi_disable();
 }
