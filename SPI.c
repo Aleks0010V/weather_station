@@ -50,11 +50,13 @@ void spi_read(uint8_t *dest_reg, uint8_t size) {
     spi_disable();
 }
 
-void spi_exchange_block(uint8_t *source, uint8_t *dest_reg) {
+void spi_exchange_block(uint8_t *block, uint8_t size) {
     spi_enable();
-    SSP2BUF = *source;
-    while(BF);
-    *dest_reg = SSP2BUF;
+    while(size--) {
+        SSP2BUF = *block;
+        while(BF);
+        *block = SSP2BUF;
+    }
     spi_disable();
 }
 
