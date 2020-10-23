@@ -16,7 +16,7 @@
 #define BF SSP2STATbits.BF
 
 static void SPI_set_pins(void);
-static void SPI_set_mode(bool CKP, bool CMP);
+static void SPI_set_mode(bool CKP, bool CKE);
 
 void initialize_SPI_master(bool CKP, bool CMP) {
     spi_disable();
@@ -24,13 +24,13 @@ void initialize_SPI_master(bool CKP, bool CMP) {
     SSP2CON1bits.SSPM = 0b0000; // SPI Master mode, clock = FOSC/4
     SPI_set_mode(CKP, CMP);
 //    SSP2IE = 0;
-//    SSP2ADD = 0x09;
+    SSP2ADD = 0x1;
 }
 
 void spi_write(uint8_t *data, uint8_t size) {
     spi_enable();
     uint8_t dummy;
-    for(uint8_t i = 0; i < size; i++) {
+    while(size--) {
         do {
             dummy = SSP2BUF;
         } while(BF);
@@ -41,7 +41,7 @@ void spi_write(uint8_t *data, uint8_t size) {
 
 void spi_read(uint8_t *dest_reg, uint8_t size) {
     spi_enable();
-    for(uint8_t i = 0; i < size; i++) {
+    while(size--) {
         do {
             SSP2BUF = 0;
         } while(!BF);
@@ -69,11 +69,12 @@ static void SPI_set_pins(void) {
     RD1PPS = 0x16;  TRISDbits.TRISD1 = 0; // SCK2 - clock output
 }
 
-static void SPI_set_mode(bool CKP, bool CMP) {
+static void SPI_set_mode(bool CKP, bool CKE) {
     /*
      * clock polarity should be same with slave device,
      * so, it should be an opportunity to change it when slave is switched.
      */
     SSP2CON1bits.CKP = CKP;
-    SSP2STATbits.SMP = CMP;
+    SSP2STATbits.CKE = CKE;
+    SSP2STATbits.SMP = 1;
 }
