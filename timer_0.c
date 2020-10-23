@@ -32,11 +32,5 @@ void t0_ISR(void) {
 
     LATA0 = ~LATA0;
     
-    uint8_t test[3];
-    test[0] = 1;
-    test[1] = 11;
-    test[2] = 111;
-    spi_write(test, 3);
-    
     t0_enable();
 }
