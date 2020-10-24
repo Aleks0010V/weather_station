@@ -23,13 +23,14 @@ void initialize_SPI_master(bool CKP, bool CKE) {
     SPI_set_pins();
     SSP2CON1bits.SSPM = 0b1010; // SPI Master mode, clock = FOSC/16
     SPI_set_mode(CKP, CKE);
-    spi_enable();
 //    SSP2IE = 0;
     SSP2ADD = 0x09;
+    spi_enable();
 }
 
 void spi_write(void *data, uint8_t size) {
-    spi_enable();
+    if (SSPEN_2 == 0)
+        SSPEN_2 = 1;
     uint8_t dummy;
     uint8_t *ptr = (uint8_t *)data;
     while(size--) {
@@ -37,28 +38,27 @@ void spi_write(void *data, uint8_t size) {
         while(!BF);
         dummy = SSP2BUF;
     }
-    spi_disable();
 }
 
 void spi_read(void *dest_reg, uint8_t size, uint8_t dummy) {
-    spi_enable();
+    if (SSPEN_2 == 0)
+        SSPEN_2 = 1;
     uint8_t *ptr = (uint8_t *)dest_reg;
     while(size--) {
         SSP2BUF = dummy;
         while(!BF);
         *ptr++ = SSP2BUF;
     }
-    spi_disable();
 }
 
 void spi_exchange_block(uint8_t *block, uint8_t size) {
-    spi_enable();
+    if (SSPEN_2 == 0)
+        SSPEN_2 = 1;
     while(size--) {
         SSP2BUF = *block;
         while(BF);
         *block = SSP2BUF;
     }
-    spi_disable();
 }
 
 void spi_ISR(void) {
