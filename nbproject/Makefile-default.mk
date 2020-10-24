@@ -57,17 +57,17 @@ OBJECTDIR=build/${CND_CONF}/${IMAGE_TYPE}
 DISTDIR=dist/${CND_CONF}/${IMAGE_TYPE}
 
 # Source Files Quoted if spaced
-SOURCEFILES_QUOTED_IF_SPACED=main.c I2C.c pin_manager.c oscillator.c system.c timer_0.c rs3231_i2c.c internal_interrupt.c SD.c SPI.c bme280_i2c.c
+SOURCEFILES_QUOTED_IF_SPACED=main.c I2C.c oscillator.c system.c timer_0.c rs3231_i2c.c internal_interrupt.c SD.c SPI.c bme280_i2c.c pin_manager.c
 
 # Object Files Quoted if spaced
-OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/main.p1 ${OBJECTDIR}/I2C.p1 ${OBJECTDIR}/pin_manager.p1 ${OBJECTDIR}/oscillator.p1 ${OBJECTDIR}/system.p1 ${OBJECTDIR}/timer_0.p1 ${OBJECTDIR}/rs3231_i2c.p1 ${OBJECTDIR}/internal_interrupt.p1 ${OBJECTDIR}/SD.p1 ${OBJECTDIR}/SPI.p1 ${OBJECTDIR}/bme280_i2c.p1
-POSSIBLE_DEPFILES=${OBJECTDIR}/main.p1.d ${OBJECTDIR}/I2C.p1.d ${OBJECTDIR}/pin_manager.p1.d ${OBJECTDIR}/oscillator.p1.d ${OBJECTDIR}/system.p1.d ${OBJECTDIR}/timer_0.p1.d ${OBJECTDIR}/rs3231_i2c.p1.d ${OBJECTDIR}/internal_interrupt.p1.d ${OBJECTDIR}/SD.p1.d ${OBJECTDIR}/SPI.p1.d ${OBJECTDIR}/bme280_i2c.p1.d
+OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/main.p1 ${OBJECTDIR}/I2C.p1 ${OBJECTDIR}/oscillator.p1 ${OBJECTDIR}/system.p1 ${OBJECTDIR}/timer_0.p1 ${OBJECTDIR}/rs3231_i2c.p1 ${OBJECTDIR}/internal_interrupt.p1 ${OBJECTDIR}/SD.p1 ${OBJECTDIR}/SPI.p1 ${OBJECTDIR}/bme280_i2c.p1 ${OBJECTDIR}/pin_manager.p1
+POSSIBLE_DEPFILES=${OBJECTDIR}/main.p1.d ${OBJECTDIR}/I2C.p1.d ${OBJECTDIR}/oscillator.p1.d ${OBJECTDIR}/system.p1.d ${OBJECTDIR}/timer_0.p1.d ${OBJECTDIR}/rs3231_i2c.p1.d ${OBJECTDIR}/internal_interrupt.p1.d ${OBJECTDIR}/SD.p1.d ${OBJECTDIR}/SPI.p1.d ${OBJECTDIR}/bme280_i2c.p1.d ${OBJECTDIR}/pin_manager.p1.d
 
 # Object Files
-OBJECTFILES=${OBJECTDIR}/main.p1 ${OBJECTDIR}/I2C.p1 ${OBJECTDIR}/pin_manager.p1 ${OBJECTDIR}/oscillator.p1 ${OBJECTDIR}/system.p1 ${OBJECTDIR}/timer_0.p1 ${OBJECTDIR}/rs3231_i2c.p1 ${OBJECTDIR}/internal_interrupt.p1 ${OBJECTDIR}/SD.p1 ${OBJECTDIR}/SPI.p1 ${OBJECTDIR}/bme280_i2c.p1
+OBJECTFILES=${OBJECTDIR}/main.p1 ${OBJECTDIR}/I2C.p1 ${OBJECTDIR}/oscillator.p1 ${OBJECTDIR}/system.p1 ${OBJECTDIR}/timer_0.p1 ${OBJECTDIR}/rs3231_i2c.p1 ${OBJECTDIR}/internal_interrupt.p1 ${OBJECTDIR}/SD.p1 ${OBJECTDIR}/SPI.p1 ${OBJECTDIR}/bme280_i2c.p1 ${OBJECTDIR}/pin_manager.p1
 
 # Source Files
-SOURCEFILES=main.c I2C.c pin_manager.c oscillator.c system.c timer_0.c rs3231_i2c.c internal_interrupt.c SD.c SPI.c bme280_i2c.c
+SOURCEFILES=main.c I2C.c oscillator.c system.c timer_0.c rs3231_i2c.c internal_interrupt.c SD.c SPI.c bme280_i2c.c pin_manager.c
 
 
 
@@ -109,14 +109,6 @@ ${OBJECTDIR}/I2C.p1: I2C.c  nbproject/Makefile-${CND_CONF}.mk
 	${MP_CC} $(MP_EXTRA_CC_PRE) -mcpu=$(MP_PROCESSOR_OPTION) -c  -D__DEBUG=1    -fno-short-double -fno-short-float -O0 -fasmfile -maddrqual=ignore -xassembler-with-cpp -mwarn=-3 -Wa,-a -DXPRJ_default=$(CND_CONF)  -msummary=-psect,-class,+mem,-hex,-file  -ginhx032 -Wl,--data-init -mno-keep-startup -mno-osccal -mno-resetbits -mno-save-resetbits -mno-download -mno-stackcall $(COMPARISON_BUILD)  -std=c99 -gdwarf-3 -mstack=compiled:auto:auto     -o ${OBJECTDIR}/I2C.p1 I2C.c 
 	@-${MV} ${OBJECTDIR}/I2C.d ${OBJECTDIR}/I2C.p1.d 
 	@${FIXDEPS} ${OBJECTDIR}/I2C.p1.d $(SILENT) -rsi ${MP_CC_DIR}../  
-	
-${OBJECTDIR}/pin_manager.p1: pin_manager.c  nbproject/Makefile-${CND_CONF}.mk
-	@${MKDIR} "${OBJECTDIR}" 
-	@${RM} ${OBJECTDIR}/pin_manager.p1.d 
-	@${RM} ${OBJECTDIR}/pin_manager.p1 
-	${MP_CC} $(MP_EXTRA_CC_PRE) -mcpu=$(MP_PROCESSOR_OPTION) -c  -D__DEBUG=1    -fno-short-double -fno-short-float -O0 -fasmfile -maddrqual=ignore -xassembler-with-cpp -mwarn=-3 -Wa,-a -DXPRJ_default=$(CND_CONF)  -msummary=-psect,-class,+mem,-hex,-file  -ginhx032 -Wl,--data-init -mno-keep-startup -mno-osccal -mno-resetbits -mno-save-resetbits -mno-download -mno-stackcall $(COMPARISON_BUILD)  -std=c99 -gdwarf-3 -mstack=compiled:auto:auto     -o ${OBJECTDIR}/pin_manager.p1 pin_manager.c 
-	@-${MV} ${OBJECTDIR}/pin_manager.d ${OBJECTDIR}/pin_manager.p1.d 
-	@${FIXDEPS} ${OBJECTDIR}/pin_manager.p1.d $(SILENT) -rsi ${MP_CC_DIR}../  
 	
 ${OBJECTDIR}/oscillator.p1: oscillator.c  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} "${OBJECTDIR}" 
@@ -182,6 +174,14 @@ ${OBJECTDIR}/bme280_i2c.p1: bme280_i2c.c  nbproject/Makefile-${CND_CONF}.mk
 	@-${MV} ${OBJECTDIR}/bme280_i2c.d ${OBJECTDIR}/bme280_i2c.p1.d 
 	@${FIXDEPS} ${OBJECTDIR}/bme280_i2c.p1.d $(SILENT) -rsi ${MP_CC_DIR}../  
 	
+${OBJECTDIR}/pin_manager.p1: pin_manager.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/pin_manager.p1.d 
+	@${RM} ${OBJECTDIR}/pin_manager.p1 
+	${MP_CC} $(MP_EXTRA_CC_PRE) -mcpu=$(MP_PROCESSOR_OPTION) -c  -D__DEBUG=1    -fno-short-double -fno-short-float -O0 -fasmfile -maddrqual=ignore -xassembler-with-cpp -mwarn=-3 -Wa,-a -DXPRJ_default=$(CND_CONF)  -msummary=-psect,-class,+mem,-hex,-file  -ginhx032 -Wl,--data-init -mno-keep-startup -mno-osccal -mno-resetbits -mno-save-resetbits -mno-download -mno-stackcall $(COMPARISON_BUILD)  -std=c99 -gdwarf-3 -mstack=compiled:auto:auto     -o ${OBJECTDIR}/pin_manager.p1 pin_manager.c 
+	@-${MV} ${OBJECTDIR}/pin_manager.d ${OBJECTDIR}/pin_manager.p1.d 
+	@${FIXDEPS} ${OBJECTDIR}/pin_manager.p1.d $(SILENT) -rsi ${MP_CC_DIR}../  
+	
 else
 ${OBJECTDIR}/main.p1: main.c  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} "${OBJECTDIR}" 
@@ -198,14 +198,6 @@ ${OBJECTDIR}/I2C.p1: I2C.c  nbproject/Makefile-${CND_CONF}.mk
 	${MP_CC} $(MP_EXTRA_CC_PRE) -mcpu=$(MP_PROCESSOR_OPTION) -c    -fno-short-double -fno-short-float -O0 -fasmfile -maddrqual=ignore -xassembler-with-cpp -mwarn=-3 -Wa,-a -DXPRJ_default=$(CND_CONF)  -msummary=-psect,-class,+mem,-hex,-file  -ginhx032 -Wl,--data-init -mno-keep-startup -mno-osccal -mno-resetbits -mno-save-resetbits -mno-download -mno-stackcall $(COMPARISON_BUILD)  -std=c99 -gdwarf-3 -mstack=compiled:auto:auto     -o ${OBJECTDIR}/I2C.p1 I2C.c 
 	@-${MV} ${OBJECTDIR}/I2C.d ${OBJECTDIR}/I2C.p1.d 
 	@${FIXDEPS} ${OBJECTDIR}/I2C.p1.d $(SILENT) -rsi ${MP_CC_DIR}../  
-	
-${OBJECTDIR}/pin_manager.p1: pin_manager.c  nbproject/Makefile-${CND_CONF}.mk
-	@${MKDIR} "${OBJECTDIR}" 
-	@${RM} ${OBJECTDIR}/pin_manager.p1.d 
-	@${RM} ${OBJECTDIR}/pin_manager.p1 
-	${MP_CC} $(MP_EXTRA_CC_PRE) -mcpu=$(MP_PROCESSOR_OPTION) -c    -fno-short-double -fno-short-float -O0 -fasmfile -maddrqual=ignore -xassembler-with-cpp -mwarn=-3 -Wa,-a -DXPRJ_default=$(CND_CONF)  -msummary=-psect,-class,+mem,-hex,-file  -ginhx032 -Wl,--data-init -mno-keep-startup -mno-osccal -mno-resetbits -mno-save-resetbits -mno-download -mno-stackcall $(COMPARISON_BUILD)  -std=c99 -gdwarf-3 -mstack=compiled:auto:auto     -o ${OBJECTDIR}/pin_manager.p1 pin_manager.c 
-	@-${MV} ${OBJECTDIR}/pin_manager.d ${OBJECTDIR}/pin_manager.p1.d 
-	@${FIXDEPS} ${OBJECTDIR}/pin_manager.p1.d $(SILENT) -rsi ${MP_CC_DIR}../  
 	
 ${OBJECTDIR}/oscillator.p1: oscillator.c  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} "${OBJECTDIR}" 
@@ -270,6 +262,14 @@ ${OBJECTDIR}/bme280_i2c.p1: bme280_i2c.c  nbproject/Makefile-${CND_CONF}.mk
 	${MP_CC} $(MP_EXTRA_CC_PRE) -mcpu=$(MP_PROCESSOR_OPTION) -c    -fno-short-double -fno-short-float -O0 -fasmfile -maddrqual=ignore -xassembler-with-cpp -mwarn=-3 -Wa,-a -DXPRJ_default=$(CND_CONF)  -msummary=-psect,-class,+mem,-hex,-file  -ginhx032 -Wl,--data-init -mno-keep-startup -mno-osccal -mno-resetbits -mno-save-resetbits -mno-download -mno-stackcall $(COMPARISON_BUILD)  -std=c99 -gdwarf-3 -mstack=compiled:auto:auto     -o ${OBJECTDIR}/bme280_i2c.p1 bme280_i2c.c 
 	@-${MV} ${OBJECTDIR}/bme280_i2c.d ${OBJECTDIR}/bme280_i2c.p1.d 
 	@${FIXDEPS} ${OBJECTDIR}/bme280_i2c.p1.d $(SILENT) -rsi ${MP_CC_DIR}../  
+	
+${OBJECTDIR}/pin_manager.p1: pin_manager.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/pin_manager.p1.d 
+	@${RM} ${OBJECTDIR}/pin_manager.p1 
+	${MP_CC} $(MP_EXTRA_CC_PRE) -mcpu=$(MP_PROCESSOR_OPTION) -c    -fno-short-double -fno-short-float -O0 -fasmfile -maddrqual=ignore -xassembler-with-cpp -mwarn=-3 -Wa,-a -DXPRJ_default=$(CND_CONF)  -msummary=-psect,-class,+mem,-hex,-file  -ginhx032 -Wl,--data-init -mno-keep-startup -mno-osccal -mno-resetbits -mno-save-resetbits -mno-download -mno-stackcall $(COMPARISON_BUILD)  -std=c99 -gdwarf-3 -mstack=compiled:auto:auto     -o ${OBJECTDIR}/pin_manager.p1 pin_manager.c 
+	@-${MV} ${OBJECTDIR}/pin_manager.d ${OBJECTDIR}/pin_manager.p1.d 
+	@${FIXDEPS} ${OBJECTDIR}/pin_manager.p1.d $(SILENT) -rsi ${MP_CC_DIR}../  
 	
 endif
 

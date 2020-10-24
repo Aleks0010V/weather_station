@@ -66,9 +66,9 @@ void spi_ISR(void) {
 
 static void SPI_set_pins(void) {
 //    SSP2CLKPPS = 0x18;  // RD0 - clock input - SCK
-    SSP2DATPPS = 0x1A;  TRISDbits.TRISD2 = 1; // RD2 - data input - SDI
-    RD3PPS = 0x17;  TRISDbits.TRISD3 = 0; // SDO2 - data output
-    RD1PPS = 0x16;  TRISDbits.TRISD1 = 0; // SCK2 - clock output
+    SSP2DATPPS = 0x1A; // RD2 - data input - SDI
+    RD3PPS = 0x17; // SDO2 - data output
+    RD1PPS = 0x16; // SCK2 - clock output
 }
 
 static void SPI_set_mode(bool CKP, bool CKE) {
