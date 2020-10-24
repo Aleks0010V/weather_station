@@ -17,6 +17,7 @@ extern "C" {
 #define interrupt_disable() GIE = 0
 #define peripheral_int_enable() PEIE = 1
 #define peripheral_int_disable() PEIE = 0
+#define _XTAL_FREQ 16000000
 
     typedef union {
         // BE CAREFULL WITH IT
