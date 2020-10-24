@@ -95,5 +95,5 @@ static void update_data(void) {
     i2c_read(current_addr, PRESS_MSB, bytes, 8);
     current_data.pressure = (bytes[0] << 20) + (bytes[1] << 12) + (bytes[2] << 4);
     current_data.temperature = (bytes[3] << 20) + (bytes[4] << 12) + (bytes[5] << 4);
-    current_data.humidity = (bytes[6] << 8) + (bytes[7] << 8);
+    current_data.humidity = (bytes[6] << 8) + (bytes[7]);
 }
