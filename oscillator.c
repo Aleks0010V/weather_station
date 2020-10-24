@@ -11,5 +11,5 @@
 void osc_Initialize(void) {
     OSCCON1bits.NOSC = 0b110;
     OSCCON1bits.NDIV = 0;
-    OSCFRQbits.HFFRQ = 0b010;
+    OSCFRQbits.HFFRQ = 0b101;
 }
