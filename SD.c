@@ -15,7 +15,7 @@ static const SD_command reset = {CMD0, 0, 0, 0, 0, 149};
 void SD_initialize(void) {
     spi_write(&reset, 6);
     uint8_t result = 0;
-    spi_read(&result, 1);
+    spi_read(&result, 1, 255);
     if ((result & 1) && ((result >> 1) == 0)) {
         LATBbits.LATB5 = 1;
     }
