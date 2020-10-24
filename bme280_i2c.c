@@ -20,15 +20,21 @@
 
 static bool check_id(uint8_t addr);
 static void reset(void);
+static void update_data(void);
 
 static uint8_t current_addr = 0;
 
-enum main_registers {
+bme_data current_data;
+
+enum config {
     CTRL_HUM = 0xF2,
     _STATUS,
     CTRL_MEAS,
     CONFIG,
-    PRESS_MSB,
+};
+
+enum data {
+    PRESS_MSB = 0xF7,
     PRESS_LSB,
     PRESS_XLSB,
     TEMP_MSB,
@@ -54,7 +60,7 @@ void bme280_Initialize(void) {
     if (bme280_exists()) {
         reset();
     } else {
-        LATDbits.LATD1 = 1;
+        LATBbits.LATB5 = 1;
         return;
     }
 }
@@ -82,4 +88,12 @@ static bool check_id(uint8_t addr) {
 static void reset(void) {
     uint8_t reset_value = 0xB6;
     i2c_write(current_addr, RESET_ADDR, &reset_value, 1);
+}
+
+static void update_data(void) {
+    uint8_t bytes[8];
+    i2c_read(current_addr, PRESS_MSB, bytes, 8);
+    current_data.pressure = (bytes[0] << 20) + (bytes[1] << 12) + (bytes[2] << 4);
+    current_data.temperature = (bytes[3] << 20) + (bytes[4] << 12) + (bytes[5] << 4);
+    current_data.humidity = (bytes[6] << 8) + (bytes[7] << 8);
 }

@@ -30,7 +30,7 @@ void initialize_SPI_master(bool CKP, bool CKE) {
 
 void spi_write(void *data, uint8_t size) {
     if (SSPEN_2 == 0)
-        SSPEN_2 = 1;
+        spi_enable();
     uint8_t dummy;
     uint8_t *ptr = (uint8_t *)data;
     while(size--) {
@@ -42,7 +42,7 @@ void spi_write(void *data, uint8_t size) {
 
 void spi_read(void *dest_reg, uint8_t size, uint8_t dummy) {
     if (SSPEN_2 == 0)
-        SSPEN_2 = 1;
+        spi_enable();
     uint8_t *ptr = (uint8_t *)dest_reg;
     while(size--) {
         SSP2BUF = dummy;
@@ -53,7 +53,7 @@ void spi_read(void *dest_reg, uint8_t size, uint8_t dummy) {
 
 void spi_exchange_block(uint8_t *block, uint8_t size) {
     if (SSPEN_2 == 0)
-        SSPEN_2 = 1;
+        spi_enable();
     while(size--) {
         SSP2BUF = *block;
         while(BF);
