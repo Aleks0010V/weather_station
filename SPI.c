@@ -39,11 +39,11 @@ void spi_write(void *data, uint8_t size) {
     spi_disable();
 }
 
-void spi_read(void *dest_reg, uint8_t size) {
+void spi_read(void *dest_reg, uint8_t size, uint8_t dummy) {
     spi_enable();
     uint8_t *ptr = (uint8_t *)dest_reg;
     while(size--) {
-        SSP2BUF = 0;
+        SSP2BUF = dummy;
         while(!BF);
         *ptr++ = SSP2BUF;
     }
