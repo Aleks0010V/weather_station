@@ -15,6 +15,7 @@ void pin_Initiasize(void) {
     LATB = 0;
     LATC = 0;
     LATD = 0;
+    LATCbits.LATC4 = 1; // SS1 select should be high on start
 
     // 0 - digital, 1 - analog
     ANSELA = 0;
