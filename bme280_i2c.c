@@ -21,7 +21,6 @@
 
 static bool check_id(uint8_t addr);
 static void reset(void);
-static void update_data(void);
 
 static uint8_t current_addr = 0;
 static int32_t t_fine;  // t_fine carries fine temperature as global value
@@ -38,7 +37,7 @@ static int16_t dig_H4;
 static int16_t dig_H5;
 static int8_t dig_H6;
 
-bme_data current_data;
+static bme_data current_data;
 
 enum config {
     CTRL_HUM = 0xF2,
@@ -90,17 +89,17 @@ bool bme280_exists(void) {
         return false;
 }
 
-int32_t compensate_temperature(int32_t adc_temp) {
+int32_t compensate_temperature(void) {
     // Returns temperature in DegC, resolution is 0.01 DegC. Output value of ?5123?equals 51.23 DegC.
     int32_t var1, var2, T;
-    var1 = (( ( (adc_temp >> 3) - ( (int32_t)dig_T1 << 1) )) * ((int32_t)dig_t[0])) >> 11;
-    var2  = (((((adc_temp>>4) - ((int32_t)dig_T1)) * ((adc_temp>>4) - ((int32_t)dig_T1))) >> 12) * ((int32_t)dig_t[1])) >> 14;
+    var1 = (( ( (current_data.temperature >> 3) - ( (int32_t)dig_T1 << 1) )) * ((int32_t)dig_t[0])) >> 11;
+    var2  = (((((current_data.temperature >> 4) - ((int32_t)dig_T1)) * ((current_data.temperature >> 4) - ((int32_t)dig_T1))) >> 12) * ((int32_t)dig_t[1])) >> 14;
     t_fine = var1 + var2;
     T  = (t_fine * 5 + 128) >> 8;
     return T;
 }
 
-uint32_t compensate_pressure(int32_t adc_pres) {
+uint32_t compensate_pressure(void) {
     // Returns pressure in Pa as unsigned 32 bit integer in Q24.8 format (24 integer bits and 8 fractional bits).
     // Output value of ?24674867?represents 24674867/256 = 96386.2 Pa = 963.862 hPa
     int64_t var1, var2, p;
@@ -113,7 +112,7 @@ uint32_t compensate_pressure(int32_t adc_pres) {
     if (var1 == 0) {
         return 0;
     }
-    p = 1048576 - adc_pres;
+    p = 1048576 - current_data.pressure;
     p = (((p << 31) - var2) * 3125) / var1;
     var1 = (((int64_t)dig_p[7]) * (p >> 13) * (p >> 13)) >> 25;
     var2 = (((int64_t)dig_p[6]) * p) >> 19;
@@ -121,12 +120,12 @@ uint32_t compensate_pressure(int32_t adc_pres) {
     return (uint32_t)p;
 }
 
-uint32_t compensate_humidity(int32_t adc_hum) {
+uint32_t compensate_humidity(void) {
     // Returns humidity in %RHas unsigned 32 bit integer in Q22.10format (22integer and 10fractional bits).
     // Output value of ?47445?represents 47445/1024= 46.333%RH
     int32_t v_x1_u32r;
     v_x1_u32r = (t_fine - ((int32_t)76800));
-    v_x1_u32r = (((((adc_hum << 14) - (((int32_t)dig_H4) << 20) - (((int32_t)dig_H5) * v_x1_u32r)) +
+    v_x1_u32r = (((((current_data.humidity << 14) - (((int32_t)dig_H4) << 20) - (((int32_t)dig_H5) * v_x1_u32r)) +
             ((int32_t)16384)) >> 15) * (((((((v_x1_u32r * ((int32_t)dig_H6)) >> 10) * (((v_x1_u32r *
             ((int32_t)dig_H3)) >> 11) + ((int32_t)32768))) >> 10) + ((int32_t)2097152)) *
             ((int32_t)dig_H2) + 8192) >> 14));
@@ -150,7 +149,7 @@ static void reset(void) {
     i2c_write(current_addr, RESET_ADDR, &reset_value, 1);
 }
 
-static void update_data(void) {
+void update_bme_data(void) {
     uint8_t bytes[8];
     i2c_read(current_addr, PRESS_MSB, bytes, 8);
     current_data.pressure = (bytes[0] << 20) + (bytes[1] << 12) + (bytes[2] << 4);
