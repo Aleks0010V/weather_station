@@ -13,6 +13,7 @@
 static const SD_command reset = {CMD0, 0, 0, 0, 0, 149};
 
 void SD_initialize(void) {
+    LATCbits.LATC4 = 0;
     uint8_t dummy[] = {255, 255, 255, 255, 255, 255, 255, 255, 255, 255};
     spi_write(dummy, 10);
     spi_write(&reset, 6);
@@ -21,4 +22,5 @@ void SD_initialize(void) {
     if ((result & 1) && ((result >> 1) == 0)) {
         LATBbits.LATB5 = 1;
     }
+    LATCbits.LATC4 = 1;
 }
