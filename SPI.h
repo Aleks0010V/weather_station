@@ -19,7 +19,7 @@ extern "C" {
 
     void initialize_SPI_master(bool CKP, bool CKE);
     void spi_write(void *data, uint8_t size);
-    void spi_read(void *dest_reg, uint8_t size);
+    void spi_read(void *dest_reg, uint8_t size, uint8_t dummy);
     void spi_exchange_block(uint8_t *block, uint8_t size);
     void spi_ISR(void);
 
