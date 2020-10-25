@@ -64,6 +64,7 @@ void i2c_write(uint8_t address, uint8_t reg, void *data, uint8_t size) {
         i2c_enable();
 
     RCEN = 0;
+    while (is_iddle());
     start();
 
     if (i2c_open(address, reg) == true) {
@@ -71,6 +72,7 @@ void i2c_write(uint8_t address, uint8_t reg, void *data, uint8_t size) {
             transmit(ptr++);
     }
 
+    while (is_iddle());
     stop();
     while (is_iddle());
 }
@@ -94,6 +96,7 @@ void i2c_read(uint8_t address, uint8_t reg, void* dest_ptr, uint8_t size) {
         i2c_enable();
 
     RCEN = 0; // prepare to read specific register
+    while (is_iddle());
     start();
     if (i2c_open(address, reg) == false) {
         stop();
@@ -110,7 +113,8 @@ void i2c_read(uint8_t address, uint8_t reg, void* dest_ptr, uint8_t size) {
         ACKDT = 1;
         ACKEN = 1;
     }
-
+    
+    while (is_iddle());
     stop();
     while (is_iddle());
 }

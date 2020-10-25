@@ -25,14 +25,17 @@ void System_Initialize(void) {
     osc_Initialize();
     pin_Initiasize();
     I2C_Initialize_master();
+    initialize_SPI_master(false, false);
     timer_0_Initialize();
     int_i_initialize();
     rs3231_Initialize();
+    
     bme280_Initialize();
+    initialize_compensate_values();
+    
     if (rs3231_Check()) {
         LATBbits.LATB5 = 1;
     }
-    initialize_SPI_master(false, false);
 }
 
 word pack_word(uint8_t lsb, uint8_t msb) {

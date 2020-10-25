@@ -24,6 +24,7 @@ extern "C" {
     bool bme280_exists(void);
     void bme280_Initialize(void);
     void update_bme_data(void);
+    void initialize_compensate_values(void);
     
     // these 3 functions take 33% of PIC16F18875 memory - 4730.88 bytes.
     // compensate_pressure - most of it.

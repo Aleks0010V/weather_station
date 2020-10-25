@@ -26,16 +26,16 @@ static uint8_t current_addr = 0;
 static int32_t t_fine;  // t_fine carries fine temperature as global value
 
 // data from calibration registers
-static uint16_t dig_T1;
-static uint16_t dig_P1;
-static int16_t dig_t[2];
-static int16_t dig_p[8];
-static uint8_t dig_H1;
-static int16_t dig_H2;
-static uint8_t dig_H3;
-static int16_t dig_H4;
-static int16_t dig_H5;
-static int8_t dig_H6;
+uint16_t dig_T1;
+uint16_t dig_P1;
+int16_t dig_t[2];
+int16_t dig_p[8];
+uint8_t dig_H1;
+int16_t dig_H2;
+uint8_t dig_H3;
+int16_t dig_H4;
+int16_t dig_H5;
+int8_t dig_H6;
 
 static bme_data current_data;
 
@@ -61,12 +61,12 @@ enum calib_0 {
     c0 = 0x88,
     c1, c2, c3, c4, c5, c6, c7, c8, c9,
     c10, c11, c12, c13, c14, c15, c16, c17, c18, c19,
-    c20, c21, c22, c23, c24
+    c20, c21, c22, c23, c24, c25
 };
 
 enum calib_1 {
-    c25 = 0xE1,
-    c26, c27, c28, c29, c30, c31, c32, c33, c34, c35, c36, c37, c38, c39
+    c26 = 0xE1,
+    c27, c28, c29, c30, c31, c32, c33, c34, c35, c36, c37, c38, c39, c40
 };
 
 void bme280_Initialize(void) {
@@ -92,8 +92,8 @@ bool bme280_exists(void) {
 int32_t compensate_temperature(void) {
     // Returns temperature in DegC, resolution is 0.01 DegC. Output value of ?5123?equals 51.23 DegC.
     int32_t var1, var2, T;
-    var1 = (( ( (current_data.temperature >> 3) - ( (int32_t)dig_T1 << 1) )) * ((int32_t)dig_t[0])) >> 11;
-    var2  = (((((current_data.temperature >> 4) - ((int32_t)dig_T1)) * ((current_data.temperature >> 4) - ((int32_t)dig_T1))) >> 12) * ((int32_t)dig_t[1])) >> 14;
+    var1 = ((((current_data.temperature >> 3) - ((int32_t)dig_T1 << 1))) * ((int32_t)dig_t[0])) >> 11;
+    var2 = (((((current_data.temperature >> 4) - ((int32_t)dig_T1)) * ((current_data.temperature >> 4) - ((int32_t)dig_T1))) >> 12) * ((int32_t)dig_t[1])) >> 14;
     t_fine = var1 + var2;
     T  = (t_fine * 5 + 128) >> 8;
     return T;
@@ -135,6 +135,14 @@ uint32_t compensate_humidity(void) {
     return(uint32_t)(v_x1_u32r >> 12);
 }
 
+void update_bme_data(void) {
+    uint8_t bytes[8];
+    i2c_read(current_addr, PRESS_MSB, bytes, 8);
+    current_data.pressure = (bytes[0] << 20) + (bytes[1] << 12) + (bytes[2] << 4);
+    current_data.temperature = (bytes[3] << 20) + (bytes[4] << 12) + (bytes[5] << 4);
+    current_data.humidity = (bytes[6] << 8) + (bytes[7]);
+}
+
 static bool check_id(uint8_t addr) {
     uint8_t id = 0;
     i2c_read(addr, ID, &id, 1);
@@ -149,10 +157,30 @@ static void reset(void) {
     i2c_write(current_addr, RESET_ADDR, &reset_value, 1);
 }
 
-void update_bme_data(void) {
-    uint8_t bytes[8];
-    i2c_read(current_addr, PRESS_MSB, bytes, 8);
-    current_data.pressure = (bytes[0] << 20) + (bytes[1] << 12) + (bytes[2] << 4);
-    current_data.temperature = (bytes[3] << 20) + (bytes[4] << 12) + (bytes[5] << 4);
-    current_data.humidity = (bytes[6] << 8) + (bytes[7]);
+void initialize_compensate_values(void) {
+    uint8_t calib_0_tmp[26];
+    uint8_t calib_1_tmp[9];
+    i2c_read(current_addr, c0, calib_0_tmp, 26);
+    i2c_read(current_addr, c26, calib_1_tmp, 9);
+    
+    dig_T1 = ((uint16_t)calib_0_tmp[0] << 8) + calib_0_tmp[1];
+    dig_t[0] = ((int16_t)calib_0_tmp[2] << 8) + calib_0_tmp[3];
+    dig_t[1] = ((int16_t)calib_0_tmp[4] << 8) + calib_0_tmp[5];
+    
+    dig_P1 = ((uint16_t)calib_0_tmp[6] << 8) + calib_0_tmp[7];
+    dig_p[0] = ((int16_t)calib_0_tmp[8] << 8) + calib_0_tmp[9];
+    dig_p[1] = ((int16_t)calib_0_tmp[10] << 8) + calib_0_tmp[11];
+    dig_p[2] = ((int16_t)calib_0_tmp[12] << 8) + calib_0_tmp[13];
+    dig_p[3] = ((int16_t)calib_0_tmp[14] << 8) + calib_0_tmp[15];
+    dig_p[4] = ((int16_t)calib_0_tmp[16] << 8) + calib_0_tmp[17];
+    dig_p[5] = ((int16_t)calib_0_tmp[18] << 8) + calib_0_tmp[19];
+    dig_p[6] = ((int16_t)calib_0_tmp[20] << 8) + calib_0_tmp[21];
+    dig_p[7] = ((int16_t)calib_0_tmp[22] << 8) + calib_0_tmp[23];
+    
+    dig_H1 = calib_0_tmp[25];
+    dig_H2 = ((int16_t)calib_1_tmp[0] << 8) + calib_1_tmp[1];
+    dig_H3 = calib_1_tmp[2];
+    dig_H4 = ((int16_t)calib_1_tmp[3] << 8) + calib_1_tmp[4];
+    dig_H5 = ((int16_t)calib_1_tmp[5] << 8) + calib_1_tmp[6];
+    dig_H6 = ((int16_t)calib_1_tmp[7] << 8) + calib_1_tmp[8];
 }

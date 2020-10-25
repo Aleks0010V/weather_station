@@ -59,8 +59,8 @@ bool rs3231_Check(void)
 }
 
 void rs3231_Initialize(void) {
-//    alarm1_every_second();
-    alarm2_every_minute();
+    alarm1_every_second();
+//    alarm2_every_minute();
     clear_a1f();
     clear_a2f();
     uint8_t val = 0x07;  // enable alert 1 and alert 2 interrupts
