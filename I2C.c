@@ -26,6 +26,7 @@ static void I2C_set_pins(void);
 static void receive(uint8_t *dest_reg);
 
 void I2C_Initialize_master(void) {
+    SSPEN_1 = 0;
     I2C_set_pins();
 
     SSP1STAT = 0x00;
@@ -33,7 +34,7 @@ void I2C_Initialize_master(void) {
     SSP1CON2 = 0x00;
     SSP1ADD = 0x09;
     SSP1IE = 0;
-    i2c_disable();
+    SSPEN_1 = 1;
 }
 
 void i2c_ISR(void)
@@ -55,23 +56,23 @@ static bool is_iddle(void) {
     }
 }
 
-void i2c_write(uint8_t address, uint8_t reg, uint8_t *data, uint8_t size) {
-    if (size < 0)
+void i2c_write(uint8_t address, uint8_t reg, void *data, uint8_t size) {
+    if (size <= 0)
         return;
-
-    i2c_enable();
+    uint8_t *ptr = (uint8_t *)data;
+    if (SSPEN_1 == 0)
+        i2c_enable();
 
     RCEN = 0;
     start();
 
     if (i2c_open(address, reg) == true) {
         while(size--)
-            transmit(data++);
+            transmit(ptr++);
     }
 
     stop();
     while (is_iddle());
-    i2c_disable();
 }
 
 bool i2c_open(uint8_t address, uint8_t reg) {
@@ -84,15 +85,20 @@ bool i2c_open(uint8_t address, uint8_t reg) {
     return true;
 }
 
-void i2c_read(uint8_t address, uint8_t reg, uint8_t* dest_ptr, uint8_t size) {
-    i2c_enable();
+void i2c_read(uint8_t address, uint8_t reg, void* dest_ptr, uint8_t size) {
+    if (size <= 0)
+        return;
+    
+    uint8_t *ptr = (uint8_t *)dest_ptr;
+    if (SSPEN_1 == 0)
+        i2c_enable();
 
     RCEN = 0; // prepare to read specific register
     start();
     if (i2c_open(address, reg) == false) {
         stop();
         while (is_iddle());
-        i2c_disable();
+        return;
     }
 
     restart();
@@ -100,14 +106,13 @@ void i2c_read(uint8_t address, uint8_t reg, uint8_t* dest_ptr, uint8_t size) {
     transmit(&read_addr);
     RCEN = 1;
     while(size--) {
-        receive(dest_ptr++);
+        receive(ptr++);
         ACKDT = 1;
         ACKEN = 1;
     }
 
     stop();
     while (is_iddle());
-    i2c_disable();
 }
 
 static void transmit(uint8_t *data) {

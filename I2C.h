@@ -27,8 +27,8 @@ extern "C" {
 
     void I2C_Initialize_master(void);
     void i2c_ISR(void);
-    void i2c_write(uint8_t address, uint8_t reg, uint8_t *data, uint8_t size);
-    void i2c_read(uint8_t address, uint8_t reg, uint8_t* dest_ptr, uint8_t size);
+    void i2c_write(uint8_t address, uint8_t reg, void *data, uint8_t size);
+    void i2c_read(uint8_t address, uint8_t reg, void* dest_ptr, uint8_t size);
     bool i2c_open(uint8_t address, uint8_t reg);
 
 

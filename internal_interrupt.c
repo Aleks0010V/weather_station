@@ -19,11 +19,11 @@ void int_i_initialize(void) {
 
 void int_ISR(void) {
     INTF = 0;
-    clear_a1f();
-//    clear_a2f();
+//    clear_a1f();
+    clear_a2f();
 
-//    char time_string[8];
-//    char date_string[10];
-//    get_time_string(time_string);
-//    get_date_string(date_string);
+    char time_string[8];
+    char date_string[10];
+    get_time_string(time_string);
+    get_date_string(date_string);
 }
