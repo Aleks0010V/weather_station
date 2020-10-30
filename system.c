@@ -19,7 +19,6 @@
 #include "rs3231_i2c.h"
 #include "internal_interrupt.h"
 #include "SPI.h"
-#include "bme280_i2c.h"
 
 void System_Initialize(void) {
     osc_Initialize();
@@ -28,7 +27,6 @@ void System_Initialize(void) {
     timer_0_Initialize();
     int_i_initialize();
     rs3231_Initialize();
-    bme280_Initialize();
     if (rs3231_Check()) {
         LATBbits.LATB5 = 1;
     }
