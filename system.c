@@ -19,23 +19,24 @@
 #include "rs3231_i2c.h"
 #include "internal_interrupt.h"
 #include "SPI.h"
+#include "SD.h"
 
 void System_Initialize(void) {
     osc_Initialize();
     pin_Initiasize();
     I2C_Initialize_master();
+    initialize_SPI_master(false, true);
     timer_0_Initialize();
     int_i_initialize();
     rs3231_Initialize();
-    if (rs3231_Check()) {
+    if(rs3231_Check() != 0 && SD_initialize() != 0) {
         LATBbits.LATB5 = 1;
     }
-    initialize_SPI_master(false, false);
 }
 
 word pack_word(uint8_t lsb, uint8_t msb) {
     word result;
-    result.bytes[0] = lsb;
-    result.bytes[1] = msb;
+    result.bytes[0] = msb;
+    result.bytes[1] = lsb;
     return result;
 }
