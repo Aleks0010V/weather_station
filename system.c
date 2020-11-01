@@ -25,12 +25,11 @@ void System_Initialize(void) {
     osc_Initialize();
     pin_Initiasize();
     I2C_Initialize_master();
-    initialize_SPI_master(false, false);
+    initialize_SPI_master(false, true);
     timer_0_Initialize();
     int_i_initialize();
     rs3231_Initialize();
-    SD_initialize();
-    if (rs3231_Check()) {
+    if(rs3231_Check() != 0 && SD_initialize() != 0) {
         LATBbits.LATB5 = 1;
     }
 }

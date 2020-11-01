@@ -28,8 +28,9 @@ extern "C" {
 #define CMD25 (0x40 + 25)  // WRITE_MULTIPLE_BLOCK
 #define CMD55 (0x40 + 55)  // APP_CMD - Leading command of ACMD<n> command
 #define CMD58 (0x40 + 58)  // READ_OCR
+#define SD_TIMEOUT 4096
     
-    void SD_initialize(void);
+    uint8_t SD_initialize(void);
     
     typedef union {
         uint8_t bytes[6];
